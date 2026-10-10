@@ -974,8 +974,9 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
     for (var p = 0; p < 2; p++) {
       var pl = s.players[p];
       var bonus = (pl.touched ? 1 : 0) + (r === 1 && p === 1 - s.first ? OPTS.secondBonus : 0);
-      pl.energy = Math.min(r, pl.energy + RECHARGE[r - 1]) + bonus;
-      pl.mp = Math.min(r, pl.mp + RECHARGE[r - 1]);
+      var ri = Math.min(r, RECHARGE.length) - 1, cap = ri + 1; // au-delà de la manche 6 : réserve max et recharge restent au palier de la manche 6
+      pl.energy = Math.min(cap, pl.energy + RECHARGE[ri]) + bonus;
+      pl.mp = Math.min(cap, pl.mp + RECHARGE[ri]);
       pl.touched = false; pl.fused = false;
       if (r >= 2) drawCards(pl, DRAW);
     }
@@ -2414,7 +2415,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
       var c = E.CARDS[id];
       return '<div class="ci"><span class="rr ' + c.rar + '">' + E.RARNAME[c.rar] + '</span><span class="mx">max ' + E.MAXCOPY[c.rar] + '</span><div class="art">' + cardArt(id) + '</div><b>' + c.name + '</b><small>' + (c.phase === 'prep' ? 'Préparation' : 'Action') + ' · 1 énergie</small><p>' + c.text + '</p></div>';
     }).join('');
-    var energy = E.RECHARGE.map(function (r, i) { return '<tr><td>Manche ' + (i + 1) + '</td><td>' + (i + 1) + '</td><td>+' + r + '</td></tr>'; }).join('');
+    var energy = E.RECHARGE.map(function (r, i) { return '<tr><td>Manche ' + (i + 1) + '</td><td>' + (i + 1) + '</td><td>+' + r + '</td></tr>'; }).join('') + '<tr><td>Manches 7 à 9</td><td>' + E.RECHARGE.length + '</td><td>+' + E.RECHARGE[E.RECHARGE.length - 1] + '</td></tr>';
     var hyb = [['BV', 'Phage', 'Attaque (contact) ou sabotage (ligne) · noyau : moitié des dégâts d\'une bactérie.'], ['BC', 'Lichen', 'Attaque ou soin · noyau : moitié des dégâts d\'une bactérie.'], ['CV', 'Moisissure', 'Sabotage (1 dégât) ou soin. Ne touche pas le noyau.'], ['BCV', 'Chimère', 'Au choix : attaque, sabotage ou soin. Noyau : 2 dégâts.']];
     var hybRows = hyb.map(function (h) {
       var S = E.STATS[h[0]];
