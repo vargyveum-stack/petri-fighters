@@ -205,6 +205,24 @@ main { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-blo
 .pnav { position: sticky; top: 0; z-index: 5; display: flex; gap: 6px; overflow-x: auto; padding: 6px 0 8px; background: var(--bg); scrollbar-width: none; }
 .pnav::-webkit-scrollbar { display: none; }
 .pnav button { flex: none; border: 3px solid var(--line); border-radius: 999px; background: var(--panel); padding: 5px 12px; min-height: 36px; font-family: var(--f-display); font-size: 14px; box-shadow: 0 2px 0 var(--line); }
+.tblw.fit table { width: 100%; }
+.tblw.fit th, .tblw.fit td { padding: 5px 3px; font-size: 12.5px; }
+.tblw.fit th:first-child, .tblw.fit td:first-child { padding-left: 7px; }
+.tblw.fit td .m { width: 32px; height: 32px; margin-right: 3px; }
+.tblw.fit .uc { gap: 2px; }
+.tblw.fit td, .tblw.fit th { white-space: normal; line-height: 1.15; }
+.tblw.fit td.res { line-height: 1.15; }
+.tblw.fit td.res .m { width: 28px; height: 28px; }
+@media (max-width: 380px) { .tblw.fit th, .tblw.fit td { font-size: 12px; padding: 4px 2px; } .tblw.fit .uc .m { width: 34px; height: 34px; } }
+.tblw.fit .uc .m { width: 38px; height: 38px; margin: 0; }
+.nl { display: block; margin: 8px 0; text-align: left; }
+.nl span { display: block; font-size: 13px; font-weight: 800; color: var(--muted); margin-bottom: 3px; }
+.ni { width: 100%; box-sizing: border-box; font: inherit; font-size: 18px; font-weight: 700; padding: 10px 12px; border: 3px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--ink); }
+.stp2 { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.stp2 b { font-family: var(--f-display); font-size: 28px; min-width: 40px; text-align: center; }
+.stp2 .btn { min-height: 44px; min-width: 56px; padding: 4px 12px; }
+.ni:focus { outline: 3px solid var(--cta); outline-offset: 1px; }
+.nerr { color: var(--warn); font-weight: 800; margin: 4px 0; font-size: 14px; }
 .uc { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
 .uc .m { width: 46px; height: 46px; flex: none; display: block; }
 .uc .m .spw, .uc .m img { width: 100%; height: 100%; }
@@ -326,7 +344,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 /* Annonces */
 .toast { position: fixed; left: 50%; top: 34%; z-index: 80; transform: translate(-50%, -20px) scale(.9); opacity: 0; pointer-events: none; text-align: center; padding: 12px 22px; border: 4px solid var(--line); border-radius: 20px; color: #fff; box-shadow: 0 6px 0 var(--line); max-width: min(92vw, 420px); }
 .toast.prep { background: var(--ph-prep); } .toast.action { background: var(--ph-act); }
-.toast b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 28px; line-height: 1.05; text-shadow: 2px 2px 0 rgba(0,0,0,.3); }
+.toast b { display: block; text-wrap: balance; font-family: var(--f-display); font-weight: 400; font-size: 28px; line-height: 1.05; text-shadow: 2px 2px 0 rgba(0,0,0,.3); }
 .toast small { display: block; font-size: 14px; margin-top: 3px; }
 .toast.show { animation: toastin 1.7s ease both; }
 @keyframes toastin { 0% { opacity: 0; transform: translate(-50%, -20px) scale(.85); } 12% { opacity: 1; transform: translate(-50%, 0) scale(1.05); } 20% { transform: translate(-50%, 0) scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -8px) scale(1); } }
@@ -532,6 +550,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 .tt-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); animation: ttdot 1s ease-in-out infinite; }
 .tt-dots i:nth-child(2) { animation-delay: .15s; } .tt-dots i:nth-child(3) { animation-delay: .3s; }
 @keyframes ttdot { 0%, 100% { transform: translateY(0); opacity: .5; } 50% { transform: translateY(-4px); opacity: 1; } }
+.tt-bub.psb { position: relative; left: auto; right: auto; width: 100%; max-width: 440px; }
 .tt-bub.compact .tt-av { width: 58px; }
 .tt-bub.compact .tt-txt { font-size: 14px; line-height: 1.3; }
 .tt-bub.compact .tt-btns { margin-top: 5px; }
@@ -1283,6 +1302,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
   }
 
   var Engine = {
+    setRounds: function (n) { ROUNDS = Math.max(6, Math.min(9, n | 0 || 6)); Engine.ROUNDS = ROUNDS; },
     N: N, NC: NC, ROUNDS: ROUNDS, CORE_HP: CORE_HP, HAND_MAX: HAND_MAX, HAND_START: HAND_START, DRAW: DRAW, DECK_SIZE: DECK_SIZE, SPAWN: SPAWN,
     CORE_CELL: CORE_CELL, RECHARGE: RECHARGE, MAXCOPY: MAXCOPY, RARNAME: RARNAME, STATS: STATS, FAMNAME: FAMNAME, CARDS: CARDS, CARD_ORDER: CARD_ORDER,
     PRESETS: PRESETS, NEIGH4: NEIGH4, NEIGH8: NEIGH8, LINE: LINE, OPTS: OPTS,
@@ -1549,7 +1569,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 
 </script>
 <script>
-/* Petri Fighters - IA (3 niveaux : facile, normal, difficile) */
+/* Petri Fighters - IA (4 niveaux : facile, normal, difficile, expert) */
 (function (root) {
   'use strict';
   var E = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined') ? require('./engine.js') : root.Engine;
@@ -1592,7 +1612,8 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
   var LEVELS = {
     facile: { noise: 55, stop: 0.2, depth: 1 },
     normal: { noise: 10, stop: 0, depth: 1 },
-    difficile: { noise: 0, stop: 0, depth: 2 }
+    difficile: { noise: 0, stop: 0, depth: 2 },
+    expert: { noise: 0, stop: 0, depth: 2 }
   };
 
   function gauss() { return (Math.random() + Math.random() + Math.random() - 1.5) * 1.4; }
@@ -1647,7 +1668,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
     return evalState(c, me);
   }
 
-  function beamPlan(s) {
+  function beamPlan(s, wantNodes) {
     var me = s.turn, nodes = [{ s: s, seq: [] }], frontier = [nodes[0]], d;
     for (d = 0; d < 4; d++) {
       var next = [];
@@ -1669,12 +1690,51 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
       nd.v = terminalValue(nd.s, me) + (nd.seq.length ? 0 : 0.01);
       if (!best || nd.v > best.v) best = nd;
     });
+    if (wantNodes) { nodes.sort(function (x, y) { return y.v - x.v; }); return nodes; }
+    return best.seq.concat([{ t: 'end' }]);
+  }
+
+  /* ----- Expert : anticipe la réponse de l'adversaire (supposé fort) puis son propre coup suivant ----- */
+  var NOW = (typeof performance !== 'undefined' && performance.now) ? function () { return performance.now(); } : function () { return Date.now(); };
+  function playStep(c, me, deadline) {
+    var g = 0, st = c.step, rd = c.round;
+    while (c.phase !== 'over' && c.step === st && c.round === rd && g++ < 30) {
+      if (NOW() > deadline) return false;
+      E.apply(c, choose(c, c.turn === me ? 'rollout' : 'difficile'));
+    }
+    return true;
+  }
+  // Valeur d'un état après la fin de la manche + `extra` étapes de la suivante ; NaN si le budget temps est dépassé
+  function deepValue(s, me, extra, deadline) {
+    var c = E.clone(s);
+    if (c.phase === 'over') return evalState(c, me);
+    var rem = 3 - c.step, n, ok = true;
+    E.apply(c, { t: 'end' });
+    for (n = rem + extra; n > 0 && c.phase !== 'over'; n--) { if (!playStep(c, me, deadline)) { ok = false; break; } }
+    return ok ? evalState(c, me) : NaN;
+  }
+  var EXPERT_TOP = 6, EXPERT_BUDGET = 1800;
+  function expertPlan(s) {
+    var me = s.turn, t0 = NOW(), deadline = t0 + EXPERT_BUDGET;
+    var nodes = beamPlan(s, true).slice(0, EXPERT_TOP);
+    var extra = 2, best = null, i, v, done = 0;
+    for (i = 0; i < nodes.length; i++) {
+      var t1 = NOW();
+      v = deepValue(nodes[i].s, me, extra, deadline);
+      if (v !== v) break;
+      nodes[i].dv = v; done++;
+      // Appareil trop lent : on réduit l'anticipation à 1 tour (jusqu'à la fin de la manche) pour tout le monde
+      if (i === 0 && extra === 2 && (NOW() - t1) * nodes.length > EXPERT_BUDGET * 0.8) { extra = 0; i = -1; done = 0; deadline = NOW() + EXPERT_BUDGET; }
+    }
+    for (i = 0; i < done; i++) if (!best || nodes[i].dv > best.dv) best = nodes[i];
+    if (!best) best = nodes[0];
     return best.seq.concat([{ t: 'end' }]);
   }
 
   // Plan complet d'un tour : liste d'actions terminée par { t: 'end' }
   function plan(s, level) {
     level = LEVELS[level] ? level : 'normal';
+    if (level === 'expert') return expertPlan(s);
     if (level === 'difficile') return beamPlan(s);
     var c = E.clone(s), out = [], g = 0;
     while (g++ < 40) {
@@ -1686,7 +1746,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
     return out;
   }
 
-  var AI = { choose: choose, plan: plan, evalState: evalState, LEVELS: ['facile', 'normal', 'difficile'] };
+  var AI = { choose: choose, plan: plan, evalState: evalState, LEVELS: ['facile', 'normal', 'difficile', 'expert'] };
   if (typeof module !== 'undefined' && module.exports) module.exports = AI; else root.AI = AI;
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -1827,11 +1887,11 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
   var IACT = S24('<path d="M13.500 1.500 4.500 14h6l-1.500 8.500L19.500 9.500h-6z" fill="#fff" stroke="var(--line)" stroke-width="2" stroke-linejoin="round"/>');
 
   /* ---------- État de l'interface ---------- */
-  var UI = { tab: 'play', screen: 'home', mode: 'solo', level: 'normal', decks: ['equilibre', 'assaut'], custom: [null, null], secondBonus: true,
+  var UI = { rounds: 6, tab: 'play', screen: 'home', mode: 'solo', level: 'normal', decks: ['equilibre', 'assaut'], custom: [null, null], secondBonus: true,
     s: null, pending: null, inspect: null, infoCard: null, ov: null, editor: null, viewer: null, aiRunning: false, lastFx: [], overDismissed: false, deckErr: '', tuto: null };
   var KEY = 'germwars.v2';
   var SND = window.Snd || { play: function () {}, fx: function () {}, unlock: function () {}, toggleMusic: function () {}, toggleSfx: function () {}, music: false, sfx: false, onChange: function () {} };
-  function save() { try { localStorage.setItem(KEY, JSON.stringify({ mode: UI.mode === 'tuto' ? 'solo' : UI.mode, level: UI.level, decks: UI.decks, custom: UI.custom, secondBonus: UI.secondBonus })); } catch (e) { /* stockage indisponible */ } }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ mode: UI.mode === 'tuto' ? 'solo' : UI.mode, level: UI.level, decks: UI.decks, custom: UI.custom, secondBonus: UI.secondBonus, pn: UI.pn })); } catch (e) { /* stockage indisponible */ } }
   function load() {
     try {
       var d = JSON.parse(localStorage.getItem(KEY) || 'null');
@@ -1841,6 +1901,7 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
       if (Array.isArray(d.decks)) UI.decks = d.decks.slice(0, 2).map(function (x, i) { return (x === 'custom' || E.PRESETS.some(function (p) { return p.id === x; })) ? x : UI.decks[i]; });
       if (Array.isArray(d.custom)) UI.custom = d.custom.slice(0, 2).map(function (c) { return c && E.validateDeck(c).ok ? c : null; });
       if (typeof d.secondBonus === 'boolean') UI.secondBonus = d.secondBonus;
+      if (Array.isArray(d.pn)) UI.pn = [cleanName(d.pn[0]), cleanName(d.pn[1])];
       for (var i = 0; i < 2; i++) if (UI.decks[i] === 'custom' && !UI.custom[i]) UI.decks[i] = 'equilibre';
     } catch (e) { /* ignore */ }
   }
@@ -1848,7 +1909,7 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
   function countsOf(p) { return UI.decks[p] === 'custom' ? UI.custom[p] : presetOf(UI.decks[p]).cards; }
   function isAI(p) { return (UI.mode === 'solo' || UI.mode === 'tuto') && p === 1; }
   function viewerIdx() { return (UI.mode === 'solo' || UI.mode === 'tuto') ? 0 : UI.viewer; }
-  function levelName(l) { return l === 'facile' ? 'Facile' : l === 'difficile' ? 'Difficile' : 'Normal'; }
+  function levelName(l) { return l === 'facile' ? 'Facile' : l === 'difficile' ? 'Difficile' : l === 'expert' ? 'Expert' : 'Normal'; }
   function canAct() {
     var s = UI.s;
     return !!s && s.phase !== 'over' && !isAI(s.turn) && !UI.ov && !UI.aiRunning && (UI.mode === 'solo' || UI.mode === 'tuto' || UI.viewer === s.turn) && (!tutoOn() || tutoCanAct());
@@ -1857,10 +1918,11 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
 
   /* ---------- Annonces (bandeau + sons) ---------- */
   var toastTimer = null;
+  function nbp(t) { return String(t).replace(/ ([!?:;»])/g, '\u00A0$1').replace(/(«) /g, '$1\u00A0'); }
   function toast(t, sub, cls) {
     var el = $('#toast'); if (!el) return;
     el.className = 'toast ' + (cls || 'prep');
-    el.innerHTML = '<b>' + t + '</b><small>' + sub + '</small>';
+    el.innerHTML = '<b>' + nbp(t) + '</b><small>' + nbp(sub) + '</small>';
     void el.offsetWidth; el.classList.add('show');
     clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.classList.remove('show'); }, 1700);
   }
@@ -1882,18 +1944,92 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
     announce(b);
   }
 
+  /* ---------- Noms des joueurs ---------- */
+  function cleanName(v) { return String(v == null ? '' : v).replace(/[<>&"`\\]/g, '').replace(/\s+/g, ' ').trim().slice(0, 12); }
+  function finalNames() {
+    var pn = UI.pn || ['', ''];
+    return UI.mode === 'solo' ? [pn[0] || 'Toi', 'Prof. Petri'] : [pn[0] || 'Joueur 1', pn[1] || 'Joueur 2'];
+  }
+  function openNames() {
+    var cs = [countsOf(0), countsOf(UI.mode === 'solo' ? 0 : 1)];
+    for (var i = 0; i < (UI.mode === 'solo' ? 1 : 2); i++) if (!E.validateDeck(cs[i]).ok) { UI.deckErr = 'Le deck perso doit contenir exactement 10 cartes.'; render(); return; }
+    UI.deckErr = ''; UI.nameErr = ''; UI.rounds = 6; UI.ov = 'names'; render();
+    setTimeout(function () { var el = document.querySelector('[data-name="0"]'); if (el) { try { el.focus(); } catch (e) { /* ignore */ } } }, 80);
+  }
+  function namesGo() {
+    var els = document.querySelectorAll('[data-name]'), pn = [UI.pn && UI.pn[0] || '', UI.pn && UI.pn[1] || ''], k;
+    for (k = 0; k < els.length; k++) pn[+els[k].getAttribute('data-name')] = cleanName(els[k].value);
+    UI.pn = pn;
+    var f = finalNames(), a = f[0].toLowerCase(), b = f[1].toLowerCase();
+    if (a === b) { UI.nameErr = UI.mode === 'solo' ? 'Ce nom est réservé à ton adversaire.' : 'Choisis deux noms différents.'; UI.ov = 'names'; render(); return; }
+    UI.nameErr = ''; UI.ov = null; save();
+    if (UI.mode === 'solo') scStart('intro'); else startGame();
+  }
+
+  /* ---------- Scènes du Prof. Petri (adversaire IA) ---------- */
+  function scLines(kind) {
+    var s = UI.s, n = (kind === 'intro' ? (UI.pn && UI.pn[0]) || 'Toi' : s.names[0]), lv = UI.level, L = [];
+    if (kind === 'intro') {
+      if (lv === 'facile') L = [
+        ['hap', 'Tiens, ' + n + ' ! Tu es sûr de ne pas t\'être trompé de salle ? Ici, c\'est le laboratoire du Professeur Pétri.'],
+        ['thumb', 'Je plaisante... à moitié. Allez, je serai gentil avec toi. Je ferai même semblant de réfléchir.']];
+      else if (lv === 'expert') L = [
+        ['point', 'Ah, ' + n + ' ! Le niveau Expert ! Sais-tu seulement qui je suis ? Le plus grand microbiologiste de tous les temps. Et je suis très modeste, en plus.'],
+        ['bravo', 'J\'anticipe tes coups avant même que tu les aies imaginés. Prosterne-toi, ou joue : c\'est comme tu veux.']];
+      else if (lv === 'difficile') L = [
+        ['point', n + ' ! Le mode difficile, contre MOI ? Quelle inconscience ! Je suis un expert dans mon domaine.'],
+        ['bravo', 'Je vais te mettre en boîte (de Petri). Et je sais de quoi je parle !']];
+      else L = [
+        ['idle', 'Alors c\'est toi, ' + n + ', qui oses défier le Professeur Pétri ? Charmant.'],
+        ['point', 'Je suis un expert dans mon domaine, tu sais. Il est encore temps de faire demi-tour...']];
+    } else {
+      var w = s.winner;
+      if (w === 'draw') L = [['idle', 'Égalité, ' + n + ' ? Voilà qui est statistiquement agaçant. Je réclame une revanche !']];
+      else if (w === 1) {
+        if (lv === 'facile') L = [['hap', 'J\'ai gagné ! Oh... pardon, ' + n + ', je me suis un peu emballé. Tout le monde débute un jour. Reviens quand tu veux !']];
+        else if (lv === 'expert') L = [['bravo', 'Évidemment que j\'ai gagné, ' + n + ' ! Je les avais tous prévus, même celui où tu espérais encore. Ma culture est irréprochable, mon génie aussi.']];
+        else if (lv === 'difficile') L = [['bravo', 'Mis en boîte, ' + n + ' ! Étiqueté, scellé, au frigo. Reviens quand tu auras grandi, petite colonie !']];
+        else L = [['hap', 'Et voilà, ' + n + '. Je t\'avais prévenu : on ne défie pas le Professeur Pétri sans y laisser quelques pseudopodes.']];
+      } else {
+        if (lv === 'facile') L = [['thumb', 'Bravo, ' + n + ' ! Tu as été meilleur que prévu... enfin, j\'ai peut-être un tout petit peu aidé. Je n\'ai rien dit.']];
+        else if (lv === 'expert') L = [['oops', 'Quoi ?! C\'est statistiquement impossible ! ' + n + ', un coup de chance ne fait pas un expert ! Je réclame une enquête... et une revanche, pour rétablir l\'ordre naturel.']];
+        else if (lv === 'difficile') L = [['oops', 'Impossible ! Mon protocole était parfait ! ' + n + ', tu as dû tricher... Hum. Enfin, bien joué. Je note tout dans mon carnet.']];
+        else L = [['oops', 'Hum. Beau jeu, ' + n + '. Un coup de chance, sans doute. Je veux ma revanche !']];
+      }
+    }
+    return L.map(function (x) { return { m: x[0], t: x[1] }; });
+  }
+  function scStart(kind) {
+    UI.sc = { kind: kind, i: 0, talk: false, lines: scLines(kind) };
+    UI.ov = 'prof'; SND.unlock && SND.unlock(); render(); scSpeak();
+  }
+  function scSpeak() {
+    var sc = UI.sc; if (!sc) return;
+    var txt = sc.lines[sc.i].t, vms = SND.speak ? SND.speak(txt) : 0;
+    sc.talk = true; clearTimeout(sc.tm);
+    var av = document.getElementById('sc-av'); if (av) av.classList.add('talking');
+    sc.tm = setTimeout(function () { sc.talk = false; var a = document.getElementById('sc-av'); if (a) a.classList.remove('talking'); }, vms ? vms + 200 : Math.min(2600, 700 + txt.length * 14));
+  }
+  function scNext() {
+    var sc = UI.sc; if (!sc) return;
+    if (sc.i < sc.lines.length - 1) { sc.i++; render(); scSpeak(); return; }
+    clearTimeout(sc.tm); if (SND.stopVoice) { try { SND.stopVoice(); } catch (e) { /* ignore */ } }
+    UI.sc = null;
+    if (sc.kind === 'intro') { UI.ov = null; startGame(); } else { UI.ov = 'over'; render(); }
+  }
+
   /* ---------- Partie : démarrage ---------- */
   function startGame() {
     var cs = [countsOf(0), UI.mode === 'solo' ? E.PRESETS[Math.floor(Math.random() * E.PRESETS.length)].cards : countsOf(1)];
     for (var i = 0; i < 2; i++) if (!E.validateDeck(cs[i]).ok) { UI.deckErr = 'Le deck perso doit contenir exactement 10 cartes.'; render(); return; }
     UI.deckErr = '';
-    E.OPTS.secondBonus = 0;
-    var names = UI.mode === 'solo' ? ['Toi', 'IA ' + levelName(UI.level)] : ['Joueur 1', 'Joueur 2'];
+    E.OPTS.secondBonus = 0; E.setRounds(UI.rounds);
+    var names = finalNames();
     UI.s = E.newGame({ decks: [E.deckFromCounts(cs[0]), E.deckFromCounts(cs[1])], names: names });
     UI.screen = 'game'; UI.pending = null; UI.inspect = null; UI.infoCard = null; UI.ov = null; UI.viewer = null; UI.overDismissed = false; UI.lastFx = []; UI.aiRunning = false;
     save(); syncPass(); render();
     var s = UI.s, f = s.first, sec = 1 - f;
-    var who = UI.mode === 'solo' ? (f === 0 ? 'Tu commences !' : s.names[1] + ' commence !') : s.names[f] + ' commence !';
+    var who = s.names[f] + ' commence !';
     toast(who, 'Manche 1 · Préparation', 'prep');
     SND.play('phase');
     maybeAI();
@@ -2287,7 +2423,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     var sab = E.LINE[12];
     return '<div class="man"><div class="pnav">' +
       [['m-but', 'But'], ['m-plateau', 'Plateau'], ['m-manche', 'Manche'], ['m-energie', 'Énergie'], ['m-dep', 'Déplacement'], ['m-fam', 'Familles'], ['m-fusion', 'Fusion'], ['m-cartes', 'Cartes'], ['m-bouclier', 'Boucliers'], ['m-noyau', 'Noyau'], ['m-deck', 'Deck'], ['m-venir', 'À venir']].map(function (x) { return '<button data-jump="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
-      '<h2 id="m-but">But du jeu</h2><p>Détruis le <b>noyau</b> adverse : il a ' + E.CORE_HP + ' PV. Si personne n\'y arrive en ' + E.ROUNDS + ' manches, le noyau qui a le plus de PV gagne. En cas d\'égalité, le joueur dont les unités en jeu ont le plus de niveaux au total l\'emporte.</p>' +
+      '<h2 id="m-but">But du jeu</h2><p>Détruis le <b>noyau</b> adverse : il a ' + E.CORE_HP + ' PV. Si personne n\'y arrive en ' + E.ROUNDS + ' manches (6 par défaut, réglable de 6 à 9 avant la partie), le noyau qui a le plus de PV gagne. En cas d\'égalité, le joueur dont les unités en jeu ont le plus de niveaux au total l\'emporte.</p>' +
       '<h2 id="m-plateau">Le plateau</h2><p>Grille 5×5 partagée. Chaque noyau est fixe, au centre du bord de son camp : le tien en bas, celui de l\'adversaire en haut. Le premier joueur est tiré au sort et annoncé au début de la partie, puis l\'ordre alterne à chaque manche.</p>' +
       '<div class="dia"><div>' + zoneGrid() + '</div><p class="note">Les cases colorées sont la <b>zone de pose</b> de chaque joueur : tes unités se posent à 2 cases (en lignes et colonnes) au plus de ton noyau. Une unité posée sur une de tes unités de niveau 1 fusionne, même hors zone.</p></div>' +
       '<p>Lisibilité : le cadre foncé d\'une case indique son propriétaire (cyan en bas, ambre en haut), avec un petit repère rond (joueur du bas) ou en losange (joueur du haut). Le rond jaune en haut à droite est le <b>niveau</b>. Les yeux évoluent aussi avec le niveau :</p>' +
@@ -2301,16 +2437,16 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
       '<div class="famrow"><div class="m">' + microbe('B') + '</div><div><h3>Bactérie</h3><p>L\'attaquante, <b>au contact</b> : frappe une case autour d\'elle, diagonales comprises. Dégâts aux unités : son attaque. Dégâts au noyau : son niveau.</p></div><div class="mg">' + mini(E.NEIGH8[12]) + '</div></div>' +
       '<div class="famrow"><div class="m">' + microbe('V') + '</div><div><h3>Virus</h3><p>Le saboteur, <b>à distance</b> : touche une unité adverse en ligne droite (haut, bas, gauche, droite) à 1 ou 2 cases. La cible est brouillée (plus d\'action cette manche) et subit des dégâts. Ne touche pas le noyau.</p></div><div class="mg">' + mini(sab) + '</div></div>' +
       '<div class="famrow"><div class="m">' + microbe('C') + '</div><div><h3>Champignon</h3><p>Le soutien : soigne ses 4 voisines directes (haut, bas, gauche, droite), <b>noyau compris</b> : +niveau PV, et retire le poison. Solide, sans attaque, immobile.</p></div><div class="mg">' + mini(E.NEIGH4[12]) + '</div></div>' +
-      '<h3>Attaque / PV par niveau</h3><div class="tblw"><table><tr><th>Famille</th><th>N1</th><th>N2</th><th>N3</th></tr>' + ['B', 'V', 'C'].map(statRow).join('') + '</table></div>' +
+      '<h3>Attaque / PV par niveau</h3><div class="tblw fit"><table><tr><th>Famille</th><th>N1</th><th>N2</th><th>N3</th></tr>' + ['B', 'V', 'C'].map(statRow).join('') + '</table></div>' +
       '<div class="dia"><div>' + mini(E.NEIGH8X[12]) + '</div><p class="note">Niveau 3 : la bactérie attaque jusqu\'à 2 cases autour d\'elle ; le virus sabote jusqu\'à 3 cases en ligne ; le champignon soigne jusqu\'à 2 cases en ligne.</p></div><h2 id="m-fusion">Fusion et hybrides</h2><p>Deux unités de <b>même niveau</b> fusionnent. Même famille : le niveau monte. Familles différentes : on obtient un <b>hybride</b>. Niveau 3 maximum.</p><p><b>Une seule fusion par manche et par joueur</b>, quel que soit le moyen ci-dessous (la Greffe n\'est pas une fusion).</p><ul><li>Pose une carte d\'unité sur une de tes unités de niveau 1.</li><li>Déplace une unité sur une unité alliée compatible (sans énergie).</li><li>Ou touche « Fusionner » en préparation, puis deux unités voisines de même niveau (1 énergie).</li><li>La Chimère (3 familles) apparaît quand une fusion de niveau 2 réunit Bactérie, Champignon et Virus.</li><li>Les PV de la fusion sont la somme des PV des deux unités, plafonnée au maximum du nouveau niveau.</li></ul>' +
-      '<div class="tblw"><table><tr><th>Unité A</th><th>Unité B</th><th>Résultat</th></tr>' + fuseRow('B', 1, 'B', 1) + fuseRow('B', 1, 'V', 1) + fuseRow('B', 1, 'C', 1) + fuseRow('V', 1, 'C', 1) + fuseRow('B', 2, 'B', 2) + fuseRow('BV', 2, 'BV', 2) + fuseRow('B', 2, 'V', 2) + fuseRow('BV', 2, 'CV', 2) + '</table></div>' +
+      '<div class="tblw fit"><table><tr><th>Unité A</th><th>Unité B</th><th>Résultat</th></tr>' + fuseRow('B', 1, 'B', 1) + fuseRow('B', 1, 'V', 1) + fuseRow('B', 1, 'C', 1) + fuseRow('V', 1, 'C', 1) + fuseRow('B', 2, 'B', 2) + fuseRow('BV', 2, 'BV', 2) + fuseRow('B', 2, 'V', 2) + fuseRow('BV', 2, 'CV', 2) + '</table></div>' +
       '<h3>Hybrides</h3><div class="tblw"><table><tr><th>Hybride</th><th>N2</th><th>N3</th><th>Pouvoirs</th></tr>' + hybRows + '</table></div><p class="note">Un hybride n\'agit qu\'une fois par manche : il choisit l\'un de ses pouvoirs. Il garde les portées de ses familles. Au <b>niveau 3</b>, tout pouvoir gagne 1 case de portée. Sur le plateau, toutes les actions possibles de l\'unité sélectionnée sont listées, les impossibles sont grisées avec la raison.</p>' +
       '<h2 id="m-cartes">Les cartes</h2><div class="cat">' + cat + '</div>' +
       '<h2 id="m-bouclier">Boucliers, actions hostiles</h2><ul><li>Un <b>bouclier</b> protège une case (une de tes unités ou ton noyau) jusqu\'à la fin de la manche : attaque, sabotage, vol, poison, échange et épidémie ne passent pas. Une unité qui quitte sa case perd son bouclier.</li><li><b>Vol</b> : l\'unité volée reste sur sa case, agit pour toi si elle n\'a pas encore agi, puis revient à son propriétaire en fin de manche.</li><li><b>Poison</b> : -1 PV à la fin de la manche en cours et de la suivante. Un bouclier posé après ne l\'arrête pas, un Champignon voisin le retire.</li><li><b>Échange</b> : une de tes unités et une unité adverse échangent leur case définitivement.</li><li>On ne peut pas poser d\'unité sur une case occupée par l\'adversaire.</li></ul>' +
       '<h2 id="m-noyau">Le noyau</h2><p>' + E.CORE_HP + ' PV. Seules les unités avec un pouvoir d\'attaque (Bactérie et hybrides contenant une Bactérie) le touchent, au contact (diagonales comprises). Une Bactérie inflige son niveau en dégâts, un hybride la moitié (arrondie au supérieur). Les champignons voisins (haut, bas, gauche, droite) soignent ton noyau, jusqu\'à ' + E.CORE_HP + ' PV. Les virus ne le touchent pas.</p>' +
       '<h2 id="m-deck">Construire son deck</h2><p>10 cartes exactement, toutes familles libres. Nombre d\'exemplaires par carte : 3 pour une commune, 2 pour une rare, 1 pour une légendaire. Quatre decks prêts à jouer sont proposés, et un deck perso est modifiable depuis l\'accueil (survole ou touche l\'image d\'une carte pour lire son effet).</p>' +
-      '<h2 id="m-modes">Modes de jeu</h2><ul><li><b>Solo</b> : contre l\'IA, avec trois niveaux (Facile, Normal, Difficile).</li><li><b>2 joueurs</b> : même écran, chacun son tour, avec un écran de passage qui cache la main.</li></ul>' +
-      '<h2 id="m-venir">À venir</h2><ul><li>Autres modes de victoire : contrôle du territoire, survie aux vagues.</li><li>Duel à distance 1 contre 1, classements, défis entre amis.</li><li>IA d\'un quatrième niveau, qui anticipe les coups adverses.</li><li>Rééquilibrage de l\'énergie après les premiers tests.</li></ul></div>';
+      '<h2 id="m-modes">Modes de jeu</h2><ul><li><b>Solo</b> : contre l\'IA, avec quatre niveaux (Facile, Normal, Difficile, Expert). L\'Expert anticipe tes réponses sur deux tours (un seul sur les appareils lents).</li><li><b>2 joueurs</b> : même écran, chacun son tour, avec un écran de passage qui cache la main.</li></ul>' +
+      '<h2 id="m-venir">À venir</h2><ul><li>Autres modes de victoire : contrôle du territoire, survie aux vagues.</li><li>Duel à distance 1 contre 1, classements, défis entre amis.</li><li>Rééquilibrage de l\'énergie après les premiers tests.</li></ul></div>';
   }
 
   /* ---------- Overlays ---------- */
@@ -2329,10 +2465,24 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     }
     if (UI.ov === 'over' && s) {
       var w = s.winner, byCore = s.cores[0].hp <= 0 || s.cores[1].hp <= 0;
-      var title = w === 'draw' ? 'Égalité' : (isAI(1) && w === 1 ? 'L\'IA gagne' : (isAI(1) && w === 0 ? 'Victoire !' : s.names[w] + ' gagne'));
+      var title = w === 'draw' ? 'Égalité' : (isAI(1) && w === 1 ? 'Prof. Petri gagne' : (isAI(1) && w === 0 ? 'Victoire !' : s.names[w] + ' gagne'));
       return '<div class="overlay"><div class="sheet" style="text-align:center"><div class="big-m">' + (w === 'draw' ? coreSVG(s.cores[0].hp, 0) : microbe(w === 0 ? 'B' : 'V', 3)) + '</div><h2>' + title + '</h2><p>' +
         (byCore ? 'Noyau détruit en manche ' + s.round + '.' : 'Aux points après ' + E.ROUNDS + ' manches.') + '<br>Noyaux : ' + s.names[0] + ' ' + s.cores[0].hp + ' PV · ' + s.names[1] + ' ' + s.cores[1].hp + ' PV.</p>' +
         '<div class="row"><button class="btn" data-act="quit">Menu</button><button class="btn cta" data-act="replay">Rejouer</button></div><div class="row"><button class="btn small" data-act="closeov">Voir le plateau</button></div></div></div>';
+    }
+    if (UI.ov === 'prof' && UI.sc) {
+      var sc = UI.sc, ln = sc.lines[sc.i], last = sc.i >= sc.lines.length - 1;
+      return '<div class="overlay psc"><div class="tt-bub center psb" role="status"><div class="tt-in"><div class="tt-av m-' + ln.m + (sc.talk ? ' talking' : '') + '" id="sc-av">' + profSVG() + '</div>' +
+        '<div class="tt-body"><div class="tt-who">Prof. Petri</div><div class="tt-txt">' + nbp(ln.t) + '</div><div class="tt-btns"><button class="btn cta" data-act="scnext">' + (last ? (sc.kind === 'intro' ? 'Au combat !' : 'Suite') : 'Suivant') + '</button></div></div></div></div></div>';
+    }
+    if (UI.ov === 'names') {
+      var two = UI.mode === '2p', pn0 = UI.pn || ['', ''];
+      var inp = function (i, label, ph) { return '<label class="nl"><span>' + label + '</span><input class="ni" data-name="' + i + '" type="text" maxlength="12" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="done" placeholder="' + ph + '" value="' + (pn0[i] || '') + '"></label>'; };
+      return '<div class="overlay"><div class="sheet"><h2>' + (two ? 'Noms des joueurs' : 'Ton nom') + '</h2><p class="note" style="margin:2px 0 8px">12 caractères maximum' + (two ? ' par nom' : '') + '.</p>' +
+        (two ? inp(0, 'Joueur 1', 'Joueur 1') + inp(1, 'Joueur 2', 'Joueur 2') : inp(0, 'Ton prénom ou pseudo', 'Toi')) +
+        '<div class="nl"><span>Nombre de manches</span><div class="stp2"><button class="btn" data-act="rdn" aria-label="Moins de manches"' + (UI.rounds <= 6 ? ' disabled' : '') + '>◀</button><b id="rv">' + UI.rounds + '</b><button class="btn" data-act="rup" aria-label="Plus de manches"' + (UI.rounds >= 9 ? ' disabled' : '') + '>▶</button></div></div>' +
+        (UI.nameErr ? '<p class="nerr">' + UI.nameErr + '</p>' : '') +
+        '<div class="row"><button class="btn" data-act="closeov">Annuler</button><button class="btn cta" data-act="namesgo">Commencer</button></div></div></div>';
     }
     if (UI.ov === 'editor' && UI.editor) {
       var ed = UI.editor, v = E.validateDeck(ed.counts);
@@ -2408,7 +2558,11 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   }
   function render() {
     var s = UI.s;
-    if (UI.ov === null && s && s.phase === 'over' && !UI.overDismissed && UI.screen === 'game') { UI.ov = 'over'; UI.overDismissed = true; }
+    if (UI.ov === null && s && s.phase === 'over' && !UI.overDismissed && UI.screen === 'game') {
+      UI.overDismissed = true;
+      if (UI.mode === 'solo') setTimeout(function () { if (UI.s === s && UI.screen === 'game' && !UI.ov) scStart('end'); }, 1300);
+      else UI.ov = 'over';
+    }
     var main = $('#main');
     var keep = main.scrollTop;
     if (UI.tab === 'manual') main.innerHTML = manualHTML();
@@ -2565,7 +2719,8 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
       case 'nop': SND.play('error'); break;
       case 'music': volToggle('music', el); break;
       case 'sfx': volToggle('sfx', el); break;
-      case 'start': if (UI.mode === 'tuto') startTuto(); else startGame(); break;
+      case 'start': if (UI.mode === 'tuto') startTuto(); else openNames(); break;
+      case 'namesgo': namesGo(); break;
       case 'end': if (canAct()) doAction({ t: 'end' }); break;
       case 'stripToggle': UI.stripOpen = !UI.stripOpen; render(); break;
       case 'handToggle': UI.handOpen = !UI.handOpen; render(); break;
@@ -2591,6 +2746,14 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
       case 'log': UI.ov = 'log'; render(); break;
       case 'menu': UI.ov = 'menu'; render(); break;
       case 'result': UI.ov = 'over'; render(); break;
+      case 'scnext': scNext(); break;
+      case 'rdn': case 'rup': {
+        UI.rounds = Math.max(6, Math.min(9, (UI.rounds || 6) + (act === 'rup' ? 1 : -1))); save();
+        var rv = document.getElementById('rv'); if (rv) rv.textContent = UI.rounds;
+        var bd = document.querySelector('[data-act="rdn"]'), bu = document.querySelector('[data-act="rup"]');
+        if (bd) bd.disabled = UI.rounds <= 6; if (bu) bu.disabled = UI.rounds >= 9;
+        break;
+      }
       case 'closeov': UI.ov = null; if (UI.mode === '2p') syncPass(); render(); break;
       case 'ready': UI.viewer = s.turn; UI.ov = null; render(); break;
       case 'quit': tutoStop(); UI.s = null; UI.screen = 'home'; UI.ov = null; UI.pending = null; UI.aiRunning = false; render(); break;
@@ -2607,7 +2770,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   document.addEventListener('mouseout', function (ev) { var el = ev.target.closest ? ev.target.closest('[data-tip]') : null; if (el && !(ev.relatedTarget && el.contains(ev.relatedTarget))) hideTip(); });
   document.addEventListener('focusin', function (ev) { var el = ev.target.closest ? ev.target.closest('[data-tip]') : null; if (el) showTip(el); });
   document.addEventListener('focusout', function (ev) { if (ev.target.closest && ev.target.closest('[data-tip]')) hideTip(); });
-  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { hideTip(); volClose(); } });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { hideTip(); volClose(); } if (ev.key === 'Enter' && ev.target && ev.target.getAttribute && ev.target.getAttribute('data-name') != null) { ev.preventDefault(); namesGo(); } });
   document.addEventListener('change', function (ev) {
     var t = ev.target;
     if (t && t.getAttribute && t.getAttribute('data-chk') === 'secondBonus') { UI.secondBonus = !!t.checked; save(); }
@@ -2683,6 +2846,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     var cls = av.className, talking = / talking\b/.test(' ' + cls), mm = cls.match(/\bm-(\w+)/), m = mm ? mm[1] : 'idle';
     if (talking) { if (!av._ts) av._ts = now; } else av._ts = 0;
     if (av.id === 'tt-av' && T.point > now) return 'point';
+    if (m === 'point' || m === 'think' || m === 'thumb') return m;
     if (m === 'happy') return 'hap';
     if (m === 'oops') return 'oops';
     if (m === 'bravo') return 'bravo';
@@ -2770,14 +2934,14 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   function N(say, focus, o) { S.push(ext({ say: say, focus: focus || [], adv: 'next' }, o)); }                          // simple explication
   function K(say, focus, allow, o) { S.push(ext({ say: say, focus: focus, allow: allow, adv: 'until' }, o)); }          // le joueur touche un élément
   function A(say, focus, allow, act, o) { S.push(ext({ say: say, focus: focus, allow: allow, adv: 'act', act: act }, o)); } // le joueur fait une action précise
-  function V(say, auto, after, focus, o) { S.push(ext({ say: say, auto: auto, after: after, focus: focus || [], adv: 'next' }, o)); } // le Rival joue
+  function V(say, auto, after, focus, o) { S.push(ext({ say: say, auto: auto, after: after, focus: focus || [], adv: 'next' }, o)); } // l'Adversaire joue
   function pick(cell, btn) { return function () { var p = UI.pending; return (p && p.k === 'unitsel' && p.cell === cell) ? [btn] : [cell]; }; }
   function pendIs(k) { return function () { return !!(UI.pending && UI.pending.k === k); }; }
   var END = [Q.end];
 
   /* Manche 1 : l'écran, l'énergie, poser, déplacer, attaquer */
-  N("Bienvenue au labo, jeune microbe ! Je suis le <b>Professeur Pétri</b>. On va jouer une partie complète contre un Rival. Je te dis quoi faire, tu touches l'écran. C'est parti !", [], { center: true, mood: 'happy' });
-  N("Voici les deux <b>noyaux</b> : le tien en bas (bleu), celui du Rival en haut (orange). Chacun a <b>4 PV</b>. Pour gagner, <b>détruis le noyau adverse</b> !", [22, 2]);
+  N("Bienvenue au labo, jeune microbe ! Je suis le <b>Professeur Pétri</b>. On va jouer une partie complète contre un Adversaire. Je te dis quoi faire, tu touches l'écran. C'est parti !", [], { center: true, mood: 'happy' });
+  N("Voici les deux <b>noyaux</b> : le tien en bas (bleu), celui de l'Adversaire en haut (orange). Chacun a <b>4 PV</b>. Pour gagner, <b>détruis le noyau adverse</b> !", [22, 2]);
   N("Une partie dure <b>6 manches</b>. Chaque manche a deux phases : la <b>Préparation</b> (violet), où l'on pose et déplace ses microbes, puis l'<b>Action</b> (rouge), où l'on attaque.", [Q.phase]);
   N("Les pastilles montrent l'ordre : préparation de chacun, puis action de chacun. Le joueur qui commence <b>change à chaque manche</b>. Cette fois, c'est toi.", [Q.pips]);
   N("Voici ton <b>tableau de bord</b> : les PV de ton noyau (la barre), ton énergie, tes points de déplacement, ta fusion et tes cartes.", [Q.me]);
@@ -2794,28 +2958,28 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   K("La bulle liste ses options. Les actions grisées sont impossibles, avec la raison en dessous. Ici, elle peut se <b>déplacer</b> (1 point). Touche « Déplacer ».", [Q.bub], [Q.mv]);
   A("Avance-la d'une case, vers le centre du plateau (case verte).", [12], [12], { t: 'move', from: 17, to: 12 });
   N("Et hop ! Ton point de déplacement est dépensé : il t'en reste 0. Ta Bactérie est au centre, prête à frapper.", [12, Q.mp]);
-  A("Ta préparation est terminée. Touche <b>Fin de préparation</b> : le Rival va jouer la sienne.", END, END, { t: 'end' });
-  V("Au tour du Rival : il dépense son énergie pour poser une unité…", [{ t: 'unit', cid: 'vir', cell: 7 }, { t: 'end' }],
+  A("Ta préparation est terminée. Touche <b>Fin de préparation</b> : l'Adversaire va jouer la sienne.", END, END, { t: 'end' });
+  V("Au tour de l'Adversaire : il dépense son énergie pour poser une unité…", [{ t: 'unit', cid: 'vir', cell: 7 }, { t: 'end' }],
     "Il a posé un <b>Virus</b> devant son noyau et terminé sa préparation. Place à la <b>phase d'action</b> !", [7, Q.phase]);
   N("En <b>phase d'action</b>, chaque unité peut agir <b>une fois</b> : attaquer, saboter ou soigner. Ça ne coûte aucune énergie. Tu commences, puisque tu es premier joueur.", [Q.phase]);
   K("Touche ta Bactérie, puis « Attaquer ». Elle frappe au contact : <b>1 case autour d'elle</b>, diagonales comprises.", pick(12, Q.atk), [12, Q.atk], { until: pendIs('act') });
   A("Choisis le Virus ennemi (case jaune).", [7], [7], { t: 'act', cell: 12, fx: 'attack', target: 7 });
   N("<b>Touché !</b> 2 dégâts contre 2 PV : le Virus est détruit. Ta Bactérie est grisée : elle a agi, et c'est une fois par manche.", [12, 7]);
   A("Termine avec <b>Fin de l'action</b>.", END, END, { t: 'end' });
-  V("Le Rival n'a plus d'unité pour agir. Il passe son tour…", [{ t: 'end' }], "La manche 1 est terminée : chacun a joué sa préparation et son action.", [Q.phase]);
+  V("L'Adversaire n'a plus d'unité pour agir. Il passe son tour…", [{ t: 'end' }], "La manche 1 est terminée : chacun a joué sa préparation et son action.", [Q.phase]);
 
   /* Manche 2 : recharge, pioche, ordre alterné, bouclier */
   N("<b>Manche 2</b> ! Recharge : +1 énergie et +1 point de déplacement. Tu avais 0, te voilà à 1 de chaque. Tu pioches aussi 2 cartes (5 en main au maximum).", [Q.me]);
   N("Deux nouvelles cartes : une Bactérie et un <b>Poison</b>. Le Poison est une carte <b>hostile</b> : elle se joue pendant la phase d'action, contre une unité adverse.", [Q.hand]);
-  N("Autre changement : c'est <b>le Rival qui commence</b> cette manche. L'ordre alterne à chaque manche. Voyons ce qu'il joue…", [Q.pips]);
-  V("Le Rival prépare sa manche…", [{ t: 'unit', cid: 'bact', cell: 8 }, { t: 'end' }],
+  N("Autre changement : c'est <b>l'Adversaire qui commence</b> cette manche. L'ordre alterne à chaque manche. Voyons ce qu'il joue…", [Q.pips]);
+  V("L'Adversaire prépare sa manche…", [{ t: 'unit', cid: 'bact', cell: 8 }, { t: 'end' }],
     "Il pose une <b>Bactérie</b> en diagonale de la tienne ! Il jouera avant toi à l'action et pourrait la détruire : elle n'a qu'1 PV.", [8, 12], { mood: 'oops' });
   N("Tu peux te défendre avec un <b>Bouclier</b> : il protège une unité (ou ton noyau) jusqu'à la fin de la manche. Plus d'attaque, de sabotage ni de carte hostile possible sur elle.", ['card:bouc']);
   K("Touche la carte <b>Bouclier</b>.", ['card:bouc'], ['card:bouc'], { act: { t: 'shield', cid: 'bouc', cell: 12 } });
   A("Pose-le sur ta Bactérie.", [12], ['card:bouc', 12], { t: 'shield', cid: 'bouc', cell: 12 });
   N("Le contour bleu en pointillés, c'est le bouclier. Ton énergie repasse à 0 : cette manche ne t'en donnait qu'1.", [12, Q.nrj]);
   A("Fin de préparation.", END, END, { t: 'end' });
-  V("Phase d'action : le Rival joue en premier. Sa Bactérie cherche une cible…", [{ t: 'end' }],
+  V("Phase d'action : l'Adversaire joue en premier. Sa Bactérie cherche une cible…", [{ t: 'end' }],
     "Rien à attaquer : ta Bactérie est <b>protégée</b> ! Il passe son tour.", [8, 12]);
   K("À toi ! Touche ta Bactérie, puis « Attaquer ».", pick(12, Q.atk), [12, Q.atk], { until: pendIs('act') });
   A("Frappe sa Bactérie (case jaune) !", [8], [8], { t: 'act', cell: 12, fx: 'attack', target: 8 });
@@ -2831,22 +2995,22 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   N("Niveau <b>2</b> (le rond jaune) : 3 d'attaque, 2 PV, et 2 dégâts au noyau. Avec deux familles différentes, on obtient un <b>hybride</b> aux deux pouvoirs. Une seule fusion par manche.", [12, Q.fus]);
   N("Il te reste 1 énergie. Garde-la : <b>elle sera reportée</b> à la manche suivante !", [Q.nrj]);
   K("À l'assaut ! Touche ta Bactérie, puis « Déplacer ».", pick(12, Q.mv), [12, Q.mv], { until: pendIs('mv') });
-  A("Avance-la jusqu'à la case juste sous le noyau du Rival.", [7], [7], { t: 'move', from: 12, to: 7 });
+  A("Avance-la jusqu'à la case juste sous le noyau de l'Adversaire.", [7], [7], { t: 'move', from: 12, to: 7 });
   N("1 point dépensé : il t'en reste 2. Ta Bactérie est maintenant <b>au contact du noyau ennemi</b>.", [7, 2, Q.mp]);
   A("Fin de préparation.", END, END, { t: 'end' });
-  V("Le Rival ne pose rien ce tour-ci…", [{ t: 'end' }], "Il garde son énergie en réserve. Méfiance ! Et voici la <b>phase d'action</b> : à toi de jouer.", [Q.phase]);
+  V("L'Adversaire ne pose rien ce tour-ci…", [{ t: 'end' }], "Il garde son énergie en réserve. Méfiance ! Et voici la <b>phase d'action</b> : à toi de jouer.", [Q.phase]);
   K("Touche ta Bactérie, puis « Attaquer ».", pick(7, Q.atk), [7, Q.atk], { until: pendIs('act') });
-  A("Vise le <b>noyau</b> du Rival !", [2], [2], { t: 'act', cell: 7, fx: 'attack', target: 2 });
+  A("Vise le <b>noyau</b> de l'Adversaire !", [2], [2], { t: 'act', cell: 7, fx: 'attack', target: 2 });
   N("<b>Boum !</b> Le noyau ennemi passe de 4 à <b>2 PV</b>. Seules les Bactéries (et leurs hybrides) frappent un noyau, et seulement au contact.", [2, Q.riv], { mood: 'happy' });
   N("Bonus : un noyau touché donne <b>+1 énergie de rattrapage</b> à son propriétaire à la manche suivante. Ça évite les victoires trop écrasantes.", [Q.rnrj]);
   A("Fin de l'action.", END, END, { t: 'end' });
-  V("Le Rival riposte ! Il joue sa carte <b>Poison</b> sur ta Bactérie…", [{ t: 'poi', cid: 'poi', target: 7 }, { t: 'end' }],
+  V("L'Adversaire riposte ! Il joue sa carte <b>Poison</b> sur ta Bactérie…", [{ t: 'poi', cid: 'poi', target: 7 }, { t: 'end' }],
     "Le <b>Poison</b> fait -1 PV à la fin de cette manche <i>et</i> de la suivante. Ta Bactérie tombe à <b>1 PV</b>. Mais un Champignon sait le soigner !", [7], { mood: 'oops' });
 
   /* Manche 4 : bonus de rattrapage, bouclier, soin, victoire */
-  N("<b>Manche 4</b> ! Recharge +2, plus ton énergie de réserve : 1 + 2 = <b>3</b>. Le Rival, lui, profite de son bonus de rattrapage : regarde son énergie.", [Q.nrj, Q.rnrj]);
-  N("Ta Bactérie est à 1 PV et toujours empoisonnée (la pastille « P »). C'est le Rival qui commence : que prépare-t-il ?", [7]);
-  V("Le Rival pose une unité…", [{ t: 'unit', cid: 'vir', cell: 6 }, { t: 'end' }],
+  N("<b>Manche 4</b> ! Recharge +2, plus ton énergie de réserve : 1 + 2 = <b>3</b>. L'Adversaire, lui, profite de son bonus de rattrapage : regarde son énergie.", [Q.nrj, Q.rnrj]);
+  N("Ta Bactérie est à 1 PV et toujours empoisonnée (la pastille « P »). C'est l'Adversaire qui commence : que prépare-t-il ?", [7]);
+  V("L'Adversaire pose une unité…", [{ t: 'unit', cid: 'vir', cell: 6 }, { t: 'end' }],
     "Un <b>Virus</b> à côté de ta Bactérie ! À l'action, il pourra la saboter (-1 PV) et elle serait détruite. Il faut la <b>protéger</b> et la <b>soigner</b>.", [6, 7], { mood: 'oops' });
   N("Deux cartes pour ça : le <b>Bouclier</b>, et le <b>Champignon</b>. Immobile, il <b>soigne</b> ses voisines directes (haut, bas, gauche, droite) et ton noyau, et il retire le poison.", ['card:bouc', 'card:cham']);
   K("Touche la carte <b>Bouclier</b>.", ['card:bouc'], ['card:bouc'], { act: { t: 'shield', cid: 'bouc', cell: 7 } });
@@ -2854,23 +3018,23 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   K("Touche la carte <b>Champignon</b>.", ['card:cham'], ['card:cham'], { act: { t: 'unit', cid: 'cham', cell: 12 } });
   A("Pose-le en face de ta Bactérie, sur la case 12 : c'est une voisine directe.", [12], ['card:cham', 12], { t: 'unit', cid: 'cham', cell: 12 });
   A("Fin de préparation.", END, END, { t: 'end' });
-  V("Phase d'action : le Rival joue en premier…", [{ t: 'end' }], "Son Virus n'a aucune cible : ta Bactérie est sous bouclier. Il passe son tour.", [6, 7]);
+  V("Phase d'action : l'Adversaire joue en premier…", [{ t: 'end' }], "Son Virus n'a aucune cible : ta Bactérie est sous bouclier. Il passe son tour.", [6, 7]);
   A("Touche ton Champignon, puis « Soigner ».", pick(12, Q.heal), [12, Q.heal], { t: 'act', cell: 12, fx: 'heal' });
   N("<b>Soin !</b> Ta Bactérie regagne 1 PV et le <b>poison est retiré</b>. La voilà à 2 PV, prête à finir le travail.", [7], { mood: 'happy' });
   K("Touche ta Bactérie, puis « Attaquer ».", pick(7, Q.atk), [7, Q.atk], { until: pendIs('act') });
   A("Dernier coup : frappe le noyau !", [2], [2], { t: 'act', cell: 7, fx: 'attack', target: 2 });
 
   /* Conclusion */
-  N("<b>Victoire !</b> Le noyau du Rival est détruit : la partie est gagnée sans même aller jusqu'à la manche 6.", [2], { mood: 'bravo' });
+  N("<b>Victoire !</b> Le noyau de l'Adversaire est détruit : la partie est gagnée sans même aller jusqu'à la manche 6.", [2], { mood: 'bravo' });
   N("Si aucun noyau ne tombe, la partie se joue <b>aux points</b> après la manche 6 : le noyau le plus sain l'emporte. En cas d'égalité, le niveau total des unités départage.", []);
   N("Il existe d'autres cartes (Vol, Échange, Épidémie, Greffe, Colonie blindée), des hybrides et des unités de niveau 3. Tout est détaillé dans l'onglet <b>Manuel</b>.", [Q.tabs]);
   S.push({ say: "Tu es prêt ! Lance une partie contre l'IA, ou rejoue le tutoriel si tu veux réviser. Bonne chance, jeune microbe !", focus: [], adv: 'end', end: true, center: true, mood: 'bravo' });
 
   /* ---------- Déroulement ---------- */
   function startTuto() {
-    E.OPTS.secondBonus = 0;
+    E.OPTS.secondBonus = 0; E.setRounds(6);
     var base = E.deckFromCounts(E.PRESETS[0].cards);
-    var s = E.newGame({ decks: [base.slice(), base.slice()], names: ['Toi', 'Rival'], first: 0 });
+    var s = E.newGame({ decks: [base.slice(), base.slice()], names: ['Toi', 'Adversaire'], first: 0 });
     s.players[0].hand = ['bact', 'vir', 'cham', 'bouc']; s.players[0].deck = ['gref', 'colo', 'vol', 'bouc', 'poi', 'bact']; s.players[0].discard = [];
     s.players[1].hand = ['vir', 'bact', 'cham', 'poi']; s.players[1].deck = ['gref', 'colo', 'ech', 'bouc', 'vol', 'vir']; s.players[1].discard = [];
     UI.s = s; UI.mode = 'tuto'; UI.screen = 'game'; UI.tab = 'play'; UI.pending = null; UI.inspect = null; UI.infoCard = null; UI.ov = null;
@@ -2902,7 +3066,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
       if (!a) { setTimeout(done, 550); return; }
       var b = tRes(a, game);
       var ok = game.turn === 1 && E.legal(game).some(function (x) { return tNorm(x) === tNorm(b); });
-      if (ok) { applyAct(b); render(); } else if (window.console) console.warn('Tutoriel : action du Rival ignorée', a);
+      if (ok) { applyAct(b); render(); } else if (window.console) console.warn('Tutoriel : action de l\'Adversaire ignorée', a);
       setTimeout(step, 900);
     }
     setTimeout(step, 850);
@@ -2950,7 +3114,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     { var tav = $('#tt-av'); if (tav) tav.classList.remove('talking'); clearTimeout(T.talk); }
     if (kind === 'next') { if (st && st.adv === 'next' && !T.busy) tutoGo(T.i + 1); }
     else if (kind === 'show') tutoShow();
-    else if (kind === 'play') { tutoStop(); UI.mode = 'solo'; save(); startGame(); }
+    else if (kind === 'play') { tutoStop(); UI.mode = 'solo'; save(); openNames(); }
     else if (kind === 'again') startTuto();
     else if (kind === 'home') { tutoStop(); UI.s = null; UI.screen = 'home'; UI.pending = null; UI.ov = null; render(); }
   }
@@ -2981,7 +3145,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     var st = S[T.i];
     if (!T.busy && st && tAllowed(el, st)) { T.clicked = true; return; }
     ev.stopPropagation(); ev.preventDefault();
-    tNudge(T.busy ? "Patiente un instant : le Rival joue." : (st && st.nudge) || "Suis la consigne du Professeur : touche la zone encadrée.");
+    tNudge(T.busy ? "Patiente un instant : l'Adversaire joue." : (st && st.nudge) || "Suis la consigne du Professeur : touche la zone encadrée.");
   }
   document.addEventListener('click', tutoGate, true);
   document.addEventListener('click', function () { if (T.clicked) { T.clicked = false; tutoAfterClick(); } });
@@ -3000,10 +3164,10 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   function tTxt(st) {
     var t = (T.after && st.after) ? st.after : st.say;
     if (typeof t === 'function') t = t();
-    return String(t).replace(/\{bolt\}/g, '<span class="tt-ic">' + BOLT + '</span>').replace(/\{mv\}/g, '<span class="tt-ic">' + IMOVE + '</span>');
+    return nbp(t).replace(/\{bolt\}/g, '<span class="tt-ic">' + BOLT + '</span>').replace(/\{mv\}/g, '<span class="tt-ic">' + IMOVE + '</span>');
   }
   function tBtns(st) {
-    if (T.busy) return '<span class="tt-dots" aria-label="Le Rival joue"><i></i><i></i><i></i></span>';
+    if (T.busy) return '<span class="tt-dots" aria-label="L\'Adversaire joue"><i></i><i></i><i></i></span>';
     if (st.end) return '<button class="btn cta" data-tt="play">Jouer contre l\'IA</button><button class="btn small" data-tt="again">Rejouer le tutoriel</button><button class="btn small" data-tt="home">Menu</button>';
     if (st.adv === 'next') return '<button class="btn cta" data-tt="next">Suivant</button>';
     return '<button class="btn small" data-tt="show">Montre-moi</button>';
@@ -3079,7 +3243,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     return '<div class="hero-title">' + logoHD(seen) + '<p>Duel de microbes sur une grille 5×5. Détruis le noyau adverse.</p></div>' +
       '<div class="panel"><span class="lbl">Mode</span><div class="seg modes"><button data-set="mode:solo">Solo contre l\'IA</button><button data-set="mode:2p">2 joueurs</button><button class="on" data-set="mode:tuto">Tutoriel</button></div></div>' +
       '<div class="panel tt-home"><div class="tt-av m-happy">' + profSVG() + '</div><div><h3>Le Professeur Pétri te guide</h3>' +
-      '<p class="note" style="margin:0">Une partie scriptée contre un Rival, du premier tour à la victoire. Le Professeur explique l\'écran, l\'énergie, les déplacements, les cartes, la fusion et les noyaux, à chaque action. Compte une dizaine de minutes.</p>' +
+      '<p class="note" style="margin:0">Une partie scriptée contre un Adversaire, du premier tour à la victoire. Le Professeur explique l\'écran, l\'énergie, les déplacements, les cartes, la fusion et les noyaux, à chaque action. Compte une dizaine de minutes.</p>' +
       (done ? '<p class="note tt-done">Tutoriel déjà terminé. Tu peux le refaire quand tu veux.</p>' : '') + '</div></div>' +
       '<button class="btn cta big" data-act="start">Lancer le tutoriel</button>' +
       '<p class="note" style="text-align:center;margin-top:12px">Les règles complètes sont dans l\'onglet Manuel.</p>';
