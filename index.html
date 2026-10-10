@@ -577,8 +577,27 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 #tip.gt .il { margin-top: 4px; font-size: 12.5px; line-height: 1.3; color: var(--ink); }
 #tip.gt .il b { display: inline; font-family: var(--f-display); font-weight: 400; font-size: 13px; color: var(--ph-prep); margin-right: 4px; }
 .strip { position: relative; min-height: 0; max-height: none; overflow: visible; padding-right: 10px; margin-top: 8px; }
-.strip-ph { display: none; }
-.ovonly { display: none; }
+.boardwrap { position: relative; }
+.abub { position: absolute; z-index: 40; visibility: hidden; left: 0; top: 0; max-width: 250px; padding: 10px 11px 9px; background: var(--panel); border: 3px solid var(--line); border-radius: 20px; box-shadow: 0 4px 0 var(--line); font-family: var(--f-display); color: var(--ink); animation: abpop .14s ease-out; }
+@keyframes abpop { from { transform: scale(.86); opacity: 0; } to { transform: none; opacity: 1; } }
+.abub .abr { display: flex; gap: 10px; justify-content: center; }
+.abub .tail { position: absolute; bottom: -11px; width: 18px; height: 18px; background: var(--panel); border-right: 3px solid var(--line); border-bottom: 3px solid var(--line); transform: translateX(-50%) rotate(45deg); border-radius: 0 0 5px 0; }
+.abub.dn .tail { bottom: auto; top: -11px; transform: translateX(-50%) rotate(225deg); }
+.abub .ab { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; padding: 0; min-width: 62px; font-family: var(--f-display); font-size: 14px; color: var(--ink); }
+.abub .ab .ico { width: 58px; height: 58px; border: 3px solid var(--line); border-radius: 16px; box-shadow: 0 3px 0 var(--line); display: grid; place-items: center; }
+.abub .ab:active:not(.off) .ico { transform: translateY(3px); box-shadow: 0 0 0 var(--line); }
+.abub .ico svg, .abub .ico img { width: 30px; height: 30px; display: block; }
+.abub .a-atk .ico { background: var(--cB); } .abub .a-mv .ico { background: var(--cta); } .abub .a-heal .ico { background: var(--cC); } .abub .a-sab .ico { background: var(--cV); }
+.abub .off { color: var(--muted); }
+.abub .off .ico { background: var(--bg2); border-color: rgba(26,22,70,.45); box-shadow: 0 3px 0 rgba(26,22,70,.3); }
+.abub .off .ico svg, .abub .off .ico img { opacity: .45; filter: grayscale(1); }
+.abub .whys { margin-top: 8px; padding-top: 6px; border-top: 2px dashed var(--bg2); }
+.abub .why { font-family: var(--f-body); font-weight: 800; font-size: 11.5px; line-height: 1.25; color: var(--warn); }
+.abub .why + .why { margin-top: 2px; }
+.abub .why b { font-family: var(--f-display); font-weight: 400; color: var(--ink); }
+.abub .x { position: absolute; top: -13px; right: -11px; width: 30px; height: 30px; padding: 0; border-radius: 50%; background: var(--panel); border: 3px solid var(--line); box-shadow: 0 2px 0 var(--line); display: grid; place-items: center; font-size: 14px; line-height: 1; font-family: var(--f-display); color: var(--ink); }
+.abub.ctr { text-align: center; padding: 12px 16px 12px; }
+.abub .cn { font-size: 18px; margin-bottom: 8px; }
 .strip .infob { position: absolute; top: 6px; right: 8px; width: 32px; height: 32px; border-radius: 50%; font-style: italic; font-size: 18px; background: var(--cellhi); color: #1A1646; }
 
 /* Disposition v3 : plateau agrandi, tiroirs sur téléphone, 2 colonnes sur ordinateur */
@@ -615,10 +634,6 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
   .strip { margin-top: 4px; padding: 4px 10px; min-height: 0; }
   .strip:not(.open) { max-height: 36px; overflow: hidden; }
   .strip:not(.open) .sb > :not(:first-child) { display: none; }
-  .gl.so .strip-ph { display: block; height: 40px; }
-  .strip.open { position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: 0; max-height: none; overflow-y: auto; z-index: 9; padding-right: 92px; }
-  .strip.open .ovonly { display: inline-flex; }
-  .strip .ovx { position: absolute; top: 6px; right: 8px; }
 }
 @media (max-width: 899px) and (max-height: 759px) {
   .strip .infob { top: 2px; right: 6px; width: 30px; height: 30px; }
@@ -2013,19 +2028,57 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
     return '<div class="arow' + (ok ? '' : ' off') + '"><button class="abtn" ' + (ok ? attr : 'data-act="nop" aria-disabled="true"') + '>' + (ico || '') + label + '</button><span class="at">' + txt + '</span></div>';
   }
   function unitPanel(cell) {
-    var s = UI.s, c = s.cells[cell], u = c.unit, o = E.unitOptions(s, cell), out = unitHead(u, c);
-    if (s.phase === 'action') {
-      o.fx.forEach(function (f) {
-        out += arow(FXN[f.fx], 'data-act="fx" data-fx="' + f.fx + '"', f.ok, f.ok ? fxShort(u, f.fx) : f.why);
-      });
-    } else {
-      var names = o.fx.map(function (f) { return FXN[f.fx].toLowerCase(); });
-      if (names.length) out += '<div class="mut">Actions en phase d\'action : ' + names.join(', ') + '.</div>';
-    }
-    var mp = s.players[s.turn].mp;
-    out += arow('Déplacer', 'data-act="mvmode"', o.move.ok, o.move.ok ? '1 case (4 directions) · fusion si possible · ' + mp + ' pt' + (mp > 1 ? 's' : '') : o.move.why, '');
-    return out;
+    var s = UI.s, c = s.cells[cell], u = c.unit;
+    return unitHead(u, c) + '<div class="mut">Choisis une action dans la bulle, au-dessus de l\'unité.</div>';
   }
+  /* Bulle d'actions au-dessus de l'unité sélectionnée (ou au centre du plateau pour une carte sans cible) */
+  var FXCLS = { attack: 'a-atk', sabotage: 'a-sab', heal: 'a-heal' }, FXGL = { attack: 'sword', sabotage: 'burst', heal: 'heart' };
+  function abBtn(cls, ico, label, attr, ok) {
+    return '<button class="ab ' + cls + (ok ? '' : ' off') + '" ' + (ok ? attr : 'data-act="nop" aria-disabled="true"') + '><span class="ico">' + ico + '</span><span class="lab">' + label + '</span></button>';
+  }
+  function bubHTML() {
+    var s = UI.s, pd = UI.pending, vp = viewerIdx();
+    if (!pd || !canAct() || vp == null) return '';
+    var x = '<button class="x" data-act="cancel" aria-label="Fermer">✕</button>';
+    if (pd.k === 'card') {
+      var cid = s.players[vp].hand[pd.idx];
+      if (cid !== 'colo' && cid !== 'epid') return '';
+      return '<div class="abub ctr" data-kind="card"><div class="cn">' + E.CARDS[cid].name + '</div><button class="btn cta" data-act="playnow">Jouer la carte</button>' + x + '</div>';
+    }
+    if (pd.k !== 'unitsel') return '';
+    var c = s.cells[pd.cell]; if (!c.unit) return '';
+    var o = E.unitOptions(s, pd.cell), btns = '', whys = {}, order = [];
+    function noteWhy(label, why) { why = String(why || '').replace(/\s*\([^)]*\)/g, ''); if (!why) return; if (!whys[why]) { whys[why] = []; order.push(why); } whys[why].push(label); }
+    o.fx.forEach(function (f) {
+      btns += abBtn(FXCLS[f.fx], TG[FXGL[f.fx]], FXN[f.fx], 'data-act="fx" data-fx="' + f.fx + '"', f.ok);
+      if (!f.ok) noteWhy(FXN[f.fx], f.why);
+    });
+    btns += abBtn('a-mv', IMOVE, 'Déplacer', 'data-act="mvmode"', o.move.ok);
+    if (!o.move.ok) noteWhy('Déplacer', o.move.why);
+    var why = order.map(function (w) { return '<div class="why"><b>' + whys[w].join(' · ') + '</b> : ' + w + '</div>'; }).join('');
+    return '<div class="abub" data-kind="unit" data-cell="' + pd.cell + '"><div class="tail"></div><div class="abr">' + btns + '</div>' + (why ? '<div class="whys">' + why + '</div>' : '') + x + '</div>';
+  }
+  function placeBub() {
+    var bub = document.querySelector('.abub'); if (!bub) return;
+    var wrap = bub.parentNode, wr = wrap.getBoundingClientRect(), bw = bub.offsetWidth, bh = bub.offsetHeight, left, top;
+    if (bub.getAttribute('data-kind') === 'card') {
+      var br = wrap.querySelector('.board').getBoundingClientRect();
+      left = br.left + br.width / 2 - wr.left - bw / 2; top = br.top + br.height / 2 - wr.top - bh / 2;
+    } else {
+      var cell = wrap.querySelector('[data-cell="' + bub.getAttribute('data-cell') + '"]'); if (!cell) return;
+      var cr = cell.getBoundingClientRect(), cx = cr.left + cr.width / 2 - wr.left;
+      left = Math.max(14, Math.min(wr.width - 14 - bw, cx - bw / 2));
+      var hud = document.querySelector('.hud'), dock = document.querySelector('.dock');
+      var topLim = hud ? hud.getBoundingClientRect().bottom : 0, botLim = dock ? dock.getBoundingClientRect().top : window.innerHeight;
+      var up = cr.top - bh - 14, down = cr.bottom + 14;
+      var useUp = up >= topLim - 2 || down + bh > botLim;
+      top = (useUp ? up : down) - wr.top;
+      bub.classList.toggle('dn', !useUp);
+      var t = bub.querySelector('.tail'); if (t) t.style.left = Math.max(18, Math.min(bw - 18, cx - left)) + 'px';
+    }
+    bub.style.left = left + 'px'; bub.style.top = top + 'px'; bub.style.visibility = 'visible';
+  }
+  window.addEventListener('resize', placeBub);
   function whyNot(card) {
     var s = UI.s;
     if (isAI(s.turn)) return 'C\'est le tour de l\'IA.';
@@ -2050,15 +2103,15 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
       var cid = hand[pd.idx];
       var notarget = (cid === 'colo' || cid === 'epid');
       var step = cid === 'ech' ? (pd.own == null ? 'Choisis ton unité à échanger.' : 'Choisis l\'unité adverse.') : (notarget ? '' : 'Choisis une case en surbrillance.');
-      return cardPanel(cid, notarget ? '<div class="row"><button class="btn small cta" data-act="playnow">Jouer la carte</button></div>' : '<div class="row"><b class="go">' + step + '</b></div>');
+      return (notarget ? '' : '<div class="row"><b class="go">' + step + '</b></div>') + cardPanel(cid, '');
     }
     if (pd && pd.k === 'unitsel') return unitPanel(pd.cell);
-    if (pd && pd.k === 'act') { var uu = s.cells[pd.cell].unit; return unitHead(uu, s.cells[pd.cell]) + '<div class="row"><b class="go">' + FXN[pd.fx] + ' : choisis la cible en surbrillance.</b></div>'; }
-    if (pd && pd.k === 'mv') return unitHead(s.cells[pd.cell].unit, s.cells[pd.cell]) + '<div class="row"><b class="go">Déplacement : choisis une case verte (ou une unité alliée pour fusionner).</b></div>';
+    if (pd && pd.k === 'act') { var uu = s.cells[pd.cell].unit; return '<div class="row"><b class="go">' + FXN[pd.fx] + ' : choisis la cible en surbrillance.</b></div>' + unitHead(uu, s.cells[pd.cell]); }
+    if (pd && pd.k === 'mv') return '<div class="row"><b class="go">Déplacement : choisis une case verte (ou une unité alliée pour fusionner).</b></div>' + unitHead(s.cells[pd.cell].unit, s.cells[pd.cell]);
     if (pd && pd.k === 'fuse') return '<div class="row"><b class="go">' + (pd.a == null ? 'Fusion : choisis une première unité.' : 'Choisis l\'unité voisine de même niveau.') + '</b></div><div class="mut">Deux unités de même niveau fusionnent (1 énergie). Même famille : niveau +1. Familles différentes : hybride.</div>';
     if (UI.infoCard != null && hand[UI.infoCard]) {
       var ic = hand[UI.infoCard];
-      return cardPanel(ic, s.turn === vp ? '<div class="il why"><b>Impossible maintenant</b> ' + whyNot(E.CARDS[ic]) + '</div>' : '');
+      return (s.turn === vp ? '<div class="il why"><b>Impossible maintenant</b> ' + whyNot(E.CARDS[ic]) + '</div>' : '') + cardPanel(ic, '');
     }
     if (UI.inspect != null) return cellInfo(UI.inspect);
     return s.phase === 'prep'
@@ -2140,12 +2193,9 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     ctr += '<span class="grow"></span>';
     if (s.phase === 'prep' || s.phase === 'action') ctr += '<button class="btn small cta" data-act="end"' + (mine ? '' : ' disabled') + '>' + (s.phase === 'prep' ? 'Fin de préparation' : 'Fin de l\'action') + '</button>';
     ctr = '<button class="btn small htog" data-act="handToggle" aria-label="Agrandir ou réduire la main">' + (UI.handOpen ? '▾' : '▴') + '</button>' + ctr;
-    var hnd = viewerIdx() == null ? [] : s.players[viewerIdx()].hand, ntg = pd && pd.k === 'card' && (hnd[pd.idx] === 'colo' || hnd[pd.idx] === 'epid');
-    var so = !!((pd && (pd.k !== 'card' || ntg)) || (UI.infoCard != null && !(UI.aiRunning || isAI(s.turn))));
-    var ov = so ? '<button class="btn small ovonly ovx" data-act="cancel">Annuler</button>' : '';
-    return '<div class="gl' + (so ? ' so' : '') + '"><div class="hud">' + plHTML(0) + plHTML(1) + '</div>' +
-      '<div class="boardwrap"><div class="board ph-' + s.phase + '">' + board + '</div></div>' +
-      '<div class="dock' + (UI.handOpen ? '' : ' hc') + '"><div class="strip' + (so ? ' open' : '') + '"><div class="sb">' + stripHTML(L) + '</div>' + ov + '</div><div class="strip-ph"></div>' +
+    return '<div class="gl"><div class="hud">' + plHTML(0) + plHTML(1) + '</div>' +
+      '<div class="boardwrap"><div class="board ph-' + s.phase + '">' + board + '</div>' + bubHTML() + '</div>' +
+      '<div class="dock' + (UI.handOpen ? '' : ' hc') + '"><div class="strip"><div class="sb">' + stripHTML(L) + '</div></div>' +
       '<div class="hand">' + handHTML(L) + '</div><div class="controls">' + ctr + '</div></div>' + journalHTML() + '</div>';
   }
 
@@ -2354,6 +2404,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     $('#ov').innerHTML = overlayHTML();
     if (UI.ov !== 'editor') { hideTip(); tipAfterRender(); }
     Array.prototype.forEach.call(document.querySelectorAll('.tabbar button'), function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === UI.tab); });
+    placeBub();
     playFx();
     tutoLayout();
   }
@@ -2556,7 +2607,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     phase: '@.phase', pips: '@.phase .pips', me: '@.pl.p0', riv: '@.pl.p1',
     nrj: '@.pl.p0 .st span:nth-child(1)', mp: '@.pl.p0 .st span:nth-child(2)', fus: '@.pl.p0 .st span:nth-child(3)',
     hc: '@.pl.p0 .st span:nth-child(4)', dk: '@.pl.p0 .st span:nth-child(5)', rnrj: '@.pl.p1 .st span:nth-child(1)',
-    board: '@.board', hand: '@.hand', strip: '@.strip', end: '@[data-act="end"]', mv: '@[data-act="mvmode"]',
+    board: '@.board', hand: '@.hand', strip: '@.strip', bub: '@.abub', end: '@[data-act="end"]', mv: '@[data-act="mvmode"]',
     atk: '@[data-act="fx"][data-fx="attack"]', heal: '@[data-act="fx"][data-fx="heal"]', tabs: '@.tabbar'
   };
   var TT_ALWAYS = ['stripToggle', 'handToggle', 'music', 'sfx', 'log', 'menu', 'closeov', 'quit', 'nop', 'result'];
@@ -2665,8 +2716,8 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   A("Le panneau décrit la carte. Les cases <b>jaunes</b> sont les endroits permis : pose-la juste devant ton noyau.", [17, Q.strip], ['card:bact', 17], { t: 'unit', cid: 'bact', cell: 17 });
   N("Voilà ta <b>Bactérie</b> ! Elle a <b>2 d'attaque</b> (l'étoile) et <b>1 PV</b> (le cœur). Ton énergie tombe à 0 : la carte a coûté 1.", [17, Q.nrj]);
   K("<b>Astuce</b> : pour connaître une unité (son descriptif et tout ce qu'elle peut faire), fais un <b>appui long</b> dessus. Maintiens ton doigt sur ta Bactérie, puis relâche. (À la souris : survole-la.)", [17], [], { lp: 17, until: function () { return false; }, nudge: "Un simple toucher sélectionne l'unité. Ici, maintiens ton doigt sur la Bactérie encadrée." });
-  K("Maintenant, un simple toucher <b>sélectionne</b> l'unité : la fenêtre d'actions s'ouvre sous le plateau. Touche ta Bactérie.", [17], [17]);
-  K("La fenêtre liste ses options. Elle peut se <b>déplacer</b> (1 point). Touche « Déplacer ».", [Q.strip], [Q.mv]);
+  K("Maintenant, un simple toucher <b>sélectionne</b> l'unité : une bulle d'actions apparaît juste au-dessus. Touche ta Bactérie.", [17], [17]);
+  K("La bulle liste ses options. Les actions grisées sont impossibles, avec la raison en dessous. Ici, elle peut se <b>déplacer</b> (1 point). Touche « Déplacer ».", [Q.bub], [Q.mv]);
   A("Avance-la d'une case, vers le centre du plateau (case verte).", [12], [12], { t: 'move', from: 17, to: 12 });
   N("Et hop ! Ton point de déplacement est dépensé : il t'en reste 0. Ta Bactérie est au centre, prête à frapper.", [12, Q.mp]);
   A("Ta préparation est terminée. Touche <b>Fin de préparation</b> : le Rival va jouer la sienne.", END, END, { t: 'end' });
