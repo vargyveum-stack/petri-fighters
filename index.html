@@ -577,6 +577,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 #tip.gt .il { margin-top: 4px; font-size: 12.5px; line-height: 1.3; color: var(--ink); }
 #tip.gt .il b { display: inline; font-family: var(--f-display); font-weight: 400; font-size: 13px; color: var(--ph-prep); margin-right: 4px; }
 .strip { position: relative; min-height: 0; max-height: none; overflow: visible; padding-right: 48px; margin-top: 8px; }
+.strip .det { border-top: 2px dashed var(--bg2); padding-top: 4px; }
 .strip .infob { position: absolute; top: 6px; right: 8px; width: 32px; height: 32px; border-radius: 50%; font-style: italic; font-size: 18px; background: var(--cellhi); color: #1A1646; }
 
 /* Disposition v3 : plateau agrandi, tiroirs sur téléphone, 2 colonnes sur ordinateur */
@@ -602,6 +603,7 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 .pl .st { font-size: 11px; gap: 5px; margin-top: 1px; }
 .pl .st svg { width: 12px; height: 12px; }
 .boardwrap { padding: 2px 0 4px; }
+.gl.dt .board { width: min(100%, max(200px, calc(100dvh - 480px))); }
 .board { width: min(100%, max(260px, calc(100dvh - 330px))); padding: 9px; border-radius: 28px; }
 #app.ingame .tabbar { padding-block: 4px; gap: 8px; }
 #app.ingame .tabbar button { min-height: 38px; font-size: 15px; }
@@ -614,7 +616,12 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
   .strip:not(.open) { max-height: 36px; overflow: hidden; }
   .strip:not(.open) .sb > :not(:first-child) { display: none; }
   .strip .infob { top: 2px; right: 6px; width: 30px; height: 30px; }
-  .strip.open { position: absolute; left: 0; right: 0; bottom: calc(100% + 4px); max-height: 58dvh; overflow-y: auto; z-index: 9; box-shadow: 0 4px 0 var(--line), 0 -6px 22px rgba(10,6,32,.35); }
+  .strip.open { position: relative; max-height: none; overflow: visible; box-shadow: 0 3px 0 var(--line); }
+  .strip .det { border-top: 2px dashed var(--bg2); padding-top: 4px; }
+  .gl.so .board { width: min(100%, max(220px, calc(100dvh - 370px))); }
+  .gl.us .hand { display: none; }
+  .gl.us .board { width: min(100%, max(220px, calc(100dvh - 350px))); }
+  .gl.dt .board { width: min(100%, max(200px, calc(100dvh - 430px))); }
   .dock.hc .card { height: 56px; }
   .dock.hc .card .cn { display: none; }
   .dock.hc .card .art { padding: 12px 6px 3px; }
@@ -1853,7 +1860,7 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
     E.OPTS.secondBonus = 0;
     var names = UI.mode === 'solo' ? ['Toi', 'IA ' + levelName(UI.level)] : ['Joueur 1', 'Joueur 2'];
     UI.s = E.newGame({ decks: [E.deckFromCounts(cs[0]), E.deckFromCounts(cs[1])], names: names });
-    UI.screen = 'game'; UI.pending = null; UI.inspect = null; UI.infoCard = null; UI.ov = null; UI.viewer = null; UI.overDismissed = false; UI.lastFx = []; UI.aiRunning = false;
+    UI.screen = 'game'; UI.pending = null; UI.inspect = null; UI.infoCard = null; UI.ov = null; UI.viewer = null; UI.overDismissed = false; UI.lastFx = []; UI.aiRunning = false; UI.stripOpen = false; UI.stripDetail = false; stripSig = ''; subjSig = '';
     save(); syncPass(); render();
     var s = UI.s, f = s.first, sec = 1 - f;
     var who = UI.mode === 'solo' ? (f === 0 ? 'Tu commences !' : s.names[1] + ' commence !') : s.names[f] + ' commence !';
@@ -2030,8 +2037,24 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
     var c = E.CARDS[cid];
     return '<div class="row"><b>' + c.name + '</b><span class="mut">' + E.RARNAME[c.rar] + ' · ' + (c.phase === 'prep' ? 'préparation' : 'action') + ' · coût 1 énergie</span></div>' + (extra || '');
   }
+  /* Panneau d'infos (mobile) : s'ouvre tout seul quand une sélection apparaît ou change, jamais par-dessus le plateau */
+  var stripSig = '', subjSig = '';
+  function syncStrip() {
+    var pd = UI.pending, sig = pd ? pd.k + ':' + (pd.cell != null ? pd.cell : pd.idx != null ? pd.idx : '') : (UI.infoCard != null ? 'ic:' + UI.infoCard : '');
+    if (sig !== stripSig) { stripSig = sig; UI.stripOpen = !!sig; }
+    var ss = subjSel() || ''; if (ss !== subjSig) { subjSig = ss; UI.stripDetail = false; }
+  }
+  function subjTip() {
+    var s = UI.s, pd = UI.pending, vp = viewerIdx(), hand = vp == null ? [] : s.players[vp].hand;
+    if (pd && pd.k === 'card') return hand[pd.idx] ? tipCard(hand[pd.idx]) : '';
+    if (pd && (pd.k === 'unitsel' || pd.k === 'act' || pd.k === 'mv')) return tipCell(pd.cell);
+    if (UI.infoCard != null && hand[UI.infoCard]) return tipCard(hand[UI.infoCard]);
+    if (UI.inspect != null) return tipCell(UI.inspect);
+    return '';
+  }
   function stripHTML(L) {
     var html = stripBody(L), s = UI.s;
+    if (UI.stripDetail) { var dt = subjTip(); if (dt) html += '<div class="det">' + dt.replace(/^<div class="row">[\s\S]*?<\/div>/, '') + '</div>'; }
     if (!UI.pending && s.log.length) html += '<div class="mut last">' + s.log[s.log.length - 1].m + '</div>';
     return html;
   }
@@ -2133,7 +2156,9 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     ctr += '<span class="grow"></span>';
     if (s.phase === 'prep' || s.phase === 'action') ctr += '<button class="btn small cta" data-act="end"' + (mine ? '' : ' disabled') + '>' + (s.phase === 'prep' ? 'Fin de préparation' : 'Fin de l\'action') + '</button>';
     ctr = '<button class="btn small htog" data-act="handToggle" aria-label="Agrandir ou réduire la main">' + (UI.handOpen ? '▾' : '▴') + '</button>' + ctr;
-    return '<div class="gl"><div class="hud">' + plHTML(0) + plHTML(1) + '</div>' +
+    syncStrip();
+    var so = !!UI.stripOpen, us = so && pd && (pd.k === 'unitsel' || pd.k === 'act' || pd.k === 'mv');
+    return '<div class="gl' + (so ? ' so' : '') + (us ? ' us' : '') + (so && UI.stripDetail ? ' dt' : '') + '"><div class="hud">' + plHTML(0) + plHTML(1) + '</div>' +
       '<div class="boardwrap"><div class="board ph-' + s.phase + '">' + board + '</div></div>' +
       '<div class="dock' + (UI.handOpen ? '' : ' hc') + '"><div class="strip' + (UI.stripOpen ? ' open' : '') + '" data-act="stripToggle">' + infoBtn() + '<div class="sb">' + stripHTML(L) + '</div></div>' +
       '<div class="hand">' + handHTML(L) + '</div><div class="controls">' + ctr + '</div></div>' + journalHTML() + '</div>';
@@ -2432,6 +2457,12 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   document.addEventListener('pointercancel', lpEnd);
   document.addEventListener('contextmenu', function (ev) { if (gtEl(ev)) ev.preventDefault(); });
   document.addEventListener('click', function (ev) {
+    var tg = ev.target;
+    if (UI.stripOpen && UI.screen === 'game' && tg && tg.closest && !tg.closest('.strip')) {
+      UI.stripOpen = false; UI.stripDetail = false;
+      var gl = document.querySelector('.gl'); if (gl) { gl.classList.remove('so'); gl.classList.remove('us'); gl.classList.remove('dt'); }
+      var op = document.querySelector('.strip.open'); if (op) op.classList.remove('open');
+    }
     infoWas = infoOpen;
     if (lpSwallow > Date.now()) { lpSwallow = 0; ev.stopPropagation(); ev.preventDefault(); }
   }, true);
@@ -2488,7 +2519,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
       case 'end': if (canAct()) doAction({ t: 'end' }); break;
       case 'stripToggle': UI.stripOpen = !UI.stripOpen; render(); break;
       case 'handToggle': UI.handOpen = !UI.handOpen; render(); break;
-      case 'info': if (!infoWas) { var se = subjEl(); if (se && showGameTip(se)) infoOpen = true; } break;
+      case 'info': UI.stripDetail = !UI.stripDetail; if (UI.stripDetail) UI.stripOpen = true; render(); break;
       case 'cancel': UI.pending = null; UI.inspect = null; render(); break;
       case 'fusemode': if (canAct()) { UI.pending = { k: 'fuse', a: null }; UI.infoCard = null; UI.inspect = null; render(); } break;
       case 'mvmode': if (canAct() && UI.pending && UI.pending.k === 'unitsel') { UI.pending = { k: 'mv', cell: UI.pending.cell }; render(); } break;
