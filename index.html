@@ -576,8 +576,9 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 #tip.gt .mut { color: var(--muted); font-size: 12px; }
 #tip.gt .il { margin-top: 4px; font-size: 12.5px; line-height: 1.3; color: var(--ink); }
 #tip.gt .il b { display: inline; font-family: var(--f-display); font-weight: 400; font-size: 13px; color: var(--ph-prep); margin-right: 4px; }
-.strip { position: relative; min-height: 0; max-height: none; overflow: visible; padding-right: 48px; margin-top: 8px; }
-.strip .det { border-top: 2px dashed var(--bg2); padding-top: 4px; }
+.strip { position: relative; min-height: 0; max-height: none; overflow: visible; padding-right: 10px; margin-top: 8px; }
+.strip-ph { display: none; }
+.ovonly { display: none; }
 .strip .infob { position: absolute; top: 6px; right: 8px; width: 32px; height: 32px; border-radius: 50%; font-style: italic; font-size: 18px; background: var(--cellhi); color: #1A1646; }
 
 /* Disposition v3 : plateau agrandi, tiroirs sur téléphone, 2 colonnes sur ordinateur */
@@ -603,7 +604,6 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 .pl .st { font-size: 11px; gap: 5px; margin-top: 1px; }
 .pl .st svg { width: 12px; height: 12px; }
 .boardwrap { padding: 2px 0 4px; }
-.gl.dt .board { width: min(100%, max(200px, calc(100dvh - 480px))); }
 .board { width: min(100%, max(260px, calc(100dvh - 330px))); padding: 9px; border-radius: 28px; }
 #app.ingame .tabbar { padding-block: 4px; gap: 8px; }
 #app.ingame .tabbar button { min-height: 38px; font-size: 15px; }
@@ -611,17 +611,17 @@ td .m { width: 36px; height: 36px; display: inline-block; vertical-align: middle
 .strip .last { display: none; }
 .htog { min-width: 34px; padding-inline: 8px; flex: none; }
 @media (max-width: 899px) { .strip { max-height: 150px; overflow-y: auto; } }
-@media (max-width: 899px) and (max-height: 759px) {
-  .strip { margin-top: 4px; padding: 4px 44px 4px 10px; min-height: 0; cursor: pointer; }
+@media (max-width: 899px) {
+  .strip { margin-top: 4px; padding: 4px 10px; min-height: 0; }
   .strip:not(.open) { max-height: 36px; overflow: hidden; }
   .strip:not(.open) .sb > :not(:first-child) { display: none; }
+  .gl.so .strip-ph { display: block; height: 40px; }
+  .strip.open { position: absolute; left: 0; right: 0; top: 0; bottom: 0; margin: 0; max-height: none; overflow-y: auto; z-index: 9; padding-right: 92px; }
+  .strip.open .ovonly { display: inline-flex; }
+  .strip .ovx { position: absolute; top: 6px; right: 8px; }
+}
+@media (max-width: 899px) and (max-height: 759px) {
   .strip .infob { top: 2px; right: 6px; width: 30px; height: 30px; }
-  .strip.open { position: relative; max-height: none; overflow: visible; box-shadow: 0 3px 0 var(--line); }
-  .strip .det { border-top: 2px dashed var(--bg2); padding-top: 4px; }
-  .gl.so .board { width: min(100%, max(220px, calc(100dvh - 370px))); }
-  .gl.us .hand { display: none; }
-  .gl.us .board { width: min(100%, max(220px, calc(100dvh - 350px))); }
-  .gl.dt .board { width: min(100%, max(200px, calc(100dvh - 430px))); }
   .dock.hc .card { height: 56px; }
   .dock.hc .card .cn { display: none; }
   .dock.hc .card .art { padding: 12px 6px 3px; }
@@ -1860,7 +1860,7 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
     E.OPTS.secondBonus = 0;
     var names = UI.mode === 'solo' ? ['Toi', 'IA ' + levelName(UI.level)] : ['Joueur 1', 'Joueur 2'];
     UI.s = E.newGame({ decks: [E.deckFromCounts(cs[0]), E.deckFromCounts(cs[1])], names: names });
-    UI.screen = 'game'; UI.pending = null; UI.inspect = null; UI.infoCard = null; UI.ov = null; UI.viewer = null; UI.overDismissed = false; UI.lastFx = []; UI.aiRunning = false; UI.stripOpen = false; UI.stripDetail = false; stripSig = ''; subjSig = '';
+    UI.screen = 'game'; UI.pending = null; UI.inspect = null; UI.infoCard = null; UI.ov = null; UI.viewer = null; UI.overDismissed = false; UI.lastFx = []; UI.aiRunning = false;
     save(); syncPass(); render();
     var s = UI.s, f = s.first, sec = 1 - f;
     var who = UI.mode === 'solo' ? (f === 0 ? 'Tu commences !' : s.names[1] + ' commence !') : s.names[f] + ' commence !';
@@ -2037,24 +2037,8 @@ window.SPRX={"B1":["data:image/webp;base64,UklGRpYSAABXRUJQVlA4WAoAAAAQAAAAlQAAb
     var c = E.CARDS[cid];
     return '<div class="row"><b>' + c.name + '</b><span class="mut">' + E.RARNAME[c.rar] + ' · ' + (c.phase === 'prep' ? 'préparation' : 'action') + ' · coût 1 énergie</span></div>' + (extra || '');
   }
-  /* Panneau d'infos (mobile) : s'ouvre tout seul quand une sélection apparaît ou change, jamais par-dessus le plateau */
-  var stripSig = '', subjSig = '';
-  function syncStrip() {
-    var pd = UI.pending, sig = pd ? pd.k + ':' + (pd.cell != null ? pd.cell : pd.idx != null ? pd.idx : '') : (UI.infoCard != null ? 'ic:' + UI.infoCard : '');
-    if (sig !== stripSig) { stripSig = sig; UI.stripOpen = !!sig; }
-    var ss = subjSel() || ''; if (ss !== subjSig) { subjSig = ss; UI.stripDetail = false; }
-  }
-  function subjTip() {
-    var s = UI.s, pd = UI.pending, vp = viewerIdx(), hand = vp == null ? [] : s.players[vp].hand;
-    if (pd && pd.k === 'card') return hand[pd.idx] ? tipCard(hand[pd.idx]) : '';
-    if (pd && (pd.k === 'unitsel' || pd.k === 'act' || pd.k === 'mv')) return tipCell(pd.cell);
-    if (UI.infoCard != null && hand[UI.infoCard]) return tipCard(hand[UI.infoCard]);
-    if (UI.inspect != null) return tipCell(UI.inspect);
-    return '';
-  }
   function stripHTML(L) {
     var html = stripBody(L), s = UI.s;
-    if (UI.stripDetail) { var dt = subjTip(); if (dt) html += '<div class="det">' + dt.replace(/^<div class="row">[\s\S]*?<\/div>/, '') + '</div>'; }
     if (!UI.pending && s.log.length) html += '<div class="mut last">' + s.log[s.log.length - 1].m + '</div>';
     return html;
   }
@@ -2156,11 +2140,12 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     ctr += '<span class="grow"></span>';
     if (s.phase === 'prep' || s.phase === 'action') ctr += '<button class="btn small cta" data-act="end"' + (mine ? '' : ' disabled') + '>' + (s.phase === 'prep' ? 'Fin de préparation' : 'Fin de l\'action') + '</button>';
     ctr = '<button class="btn small htog" data-act="handToggle" aria-label="Agrandir ou réduire la main">' + (UI.handOpen ? '▾' : '▴') + '</button>' + ctr;
-    syncStrip();
-    var so = !!UI.stripOpen, us = so && pd && (pd.k === 'unitsel' || pd.k === 'act' || pd.k === 'mv');
-    return '<div class="gl' + (so ? ' so' : '') + (us ? ' us' : '') + (so && UI.stripDetail ? ' dt' : '') + '"><div class="hud">' + plHTML(0) + plHTML(1) + '</div>' +
+    var hnd = viewerIdx() == null ? [] : s.players[viewerIdx()].hand, ntg = pd && pd.k === 'card' && (hnd[pd.idx] === 'colo' || hnd[pd.idx] === 'epid');
+    var so = !!((pd && (pd.k !== 'card' || ntg)) || (UI.infoCard != null && !(UI.aiRunning || isAI(s.turn))));
+    var ov = so ? '<button class="btn small ovonly ovx" data-act="cancel">Annuler</button>' : '';
+    return '<div class="gl' + (so ? ' so' : '') + '"><div class="hud">' + plHTML(0) + plHTML(1) + '</div>' +
       '<div class="boardwrap"><div class="board ph-' + s.phase + '">' + board + '</div></div>' +
-      '<div class="dock' + (UI.handOpen ? '' : ' hc') + '"><div class="strip' + (UI.stripOpen ? ' open' : '') + '" data-act="stripToggle">' + infoBtn() + '<div class="sb">' + stripHTML(L) + '</div></div>' +
+      '<div class="dock' + (UI.handOpen ? '' : ' hc') + '"><div class="strip' + (so ? ' open' : '') + '"><div class="sb">' + stripHTML(L) + '</div>' + ov + '</div><div class="strip-ph"></div>' +
       '<div class="hand">' + handHTML(L) + '</div><div class="controls">' + ctr + '</div></div>' + journalHTML() + '</div>';
   }
 
@@ -2393,7 +2378,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   /* ---------- Événements ---------- */
 
   /* ---------- Infobulles de jeu : survol (souris), appui long (tactile), bouton i ---------- */
-  var infoOpen = false, infoWas = false, lpTimer = null, lpShown = false, lpSwallow = 0, lpX = 0, lpY = 0, lastMouse = null;
+  var infoOpen = false, infoWas = false, lpTimer = null, lpShown = false, lpEl = null, lpSwallow = 0, lpX = 0, lpY = 0, lastMouse = null;
   function subjSel() {
     var s = UI.s, pd = UI.pending, vp = viewerIdx(), hand = vp == null ? [] : s.players[vp].hand, c;
     if (!s || s.phase === 'over') return null;
@@ -2404,7 +2389,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     return null;
   }
   function subjEl() { var q = UI.s && UI.screen === 'game' ? subjSel() : null; return q ? document.querySelector(q) : null; }
-  function infoBtn() { return subjSel() ? '<button class="ibtn infob" data-act="info" aria-label="Détails de la sélection">i</button>' : ''; }
+  function infoBtn() { return ''; }
   function tipHTMLFor(el) {
     var s = UI.s, vp = viewerIdx();
     if (!s) return '';
@@ -2431,7 +2416,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   document.addEventListener('pointerover', function (ev) {
     if (ev.pointerType !== 'mouse') return;
     lastMouse = { x: ev.clientX, y: ev.clientY };
-    var el = gtEl(ev); if (el && !infoOpen) showGameTip(el);
+    var el = gtEl(ev); if (el && !infoOpen && showGameTip(el)) tutoLP(el);
   });
   document.addEventListener('pointermove', function (ev) {
     if (ev.pointerType === 'mouse') { lastMouse = { x: ev.clientX, y: ev.clientY }; return; }
@@ -2447,22 +2432,16 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     if (ev.pointerType === 'mouse') return;
     var el = gtEl(ev); if (!el) return;
     lpX = ev.clientX; lpY = ev.clientY; clearTimeout(lpTimer);
-    lpTimer = setTimeout(function () { lpTimer = null; if (showGameTip(el)) { lpShown = true; infoOpen = false; try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {} } }, 350);
+    lpTimer = setTimeout(function () { lpTimer = null; if (showGameTip(el)) { lpShown = true; lpEl = el; infoOpen = false; try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {} } }, 350);
   });
   function lpEnd() {
     clearTimeout(lpTimer); lpTimer = null;
-    if (lpShown) { lpShown = false; hideTip(); lpSwallow = Date.now() + 500; }
+    if (lpShown) { lpShown = false; hideTip(); lpSwallow = Date.now() + 500; tutoLP(lpEl); }
   }
   document.addEventListener('pointerup', lpEnd);
   document.addEventListener('pointercancel', lpEnd);
   document.addEventListener('contextmenu', function (ev) { if (gtEl(ev)) ev.preventDefault(); });
   document.addEventListener('click', function (ev) {
-    var tg = ev.target;
-    if (UI.stripOpen && UI.screen === 'game' && tg && tg.closest && !tg.closest('.strip')) {
-      UI.stripOpen = false; UI.stripDetail = false;
-      var gl = document.querySelector('.gl'); if (gl) { gl.classList.remove('so'); gl.classList.remove('us'); gl.classList.remove('dt'); }
-      var op = document.querySelector('.strip.open'); if (op) op.classList.remove('open');
-    }
     infoWas = infoOpen;
     if (lpSwallow > Date.now()) { lpSwallow = 0; ev.stopPropagation(); ev.preventDefault(); }
   }, true);
@@ -2519,8 +2498,8 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
       case 'end': if (canAct()) doAction({ t: 'end' }); break;
       case 'stripToggle': UI.stripOpen = !UI.stripOpen; render(); break;
       case 'handToggle': UI.handOpen = !UI.handOpen; render(); break;
-      case 'info': UI.stripDetail = !UI.stripDetail; if (UI.stripDetail) UI.stripOpen = true; render(); break;
-      case 'cancel': UI.pending = null; UI.inspect = null; render(); break;
+      case 'info': if (!infoWas) { var se = subjEl(); if (se && showGameTip(se)) infoOpen = true; } break;
+      case 'cancel': UI.pending = null; UI.inspect = null; UI.infoCard = null; render(); break;
       case 'fusemode': if (canAct()) { UI.pending = { k: 'fuse', a: null }; UI.infoCard = null; UI.inspect = null; render(); } break;
       case 'mvmode': if (canAct() && UI.pending && UI.pending.k === 'unitsel') { UI.pending = { k: 'mv', cell: UI.pending.cell }; render(); } break;
       case 'fx': {
@@ -2685,8 +2664,9 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   K("Pose ta première unité ! Touche la carte <b>Bactérie</b>.", ['card:bact'], ['card:bact'], { act: { t: 'unit', cid: 'bact', cell: 17 } });
   A("Le panneau décrit la carte. Les cases <b>jaunes</b> sont les endroits permis : pose-la juste devant ton noyau.", [17, Q.strip], ['card:bact', 17], { t: 'unit', cid: 'bact', cell: 17 });
   N("Voilà ta <b>Bactérie</b> ! Elle a <b>2 d'attaque</b> (l'étoile) et <b>1 PV</b> (le cœur). Ton énergie tombe à 0 : la carte a coûté 1.", [17, Q.nrj]);
-  K("Touche ta Bactérie pour voir ce qu'elle sait faire.", [17], [17]);
-  K("Le panneau liste ses options. Elle peut se <b>déplacer</b> (1 point). Touche « Déplacer ».", [Q.strip], [Q.mv]);
+  K("<b>Astuce</b> : pour connaître une unité (son descriptif et tout ce qu'elle peut faire), fais un <b>appui long</b> dessus. Maintiens ton doigt sur ta Bactérie, puis relâche. (À la souris : survole-la.)", [17], [], { lp: 17, until: function () { return false; }, nudge: "Un simple toucher sélectionne l'unité. Ici, maintiens ton doigt sur la Bactérie encadrée." });
+  K("Maintenant, un simple toucher <b>sélectionne</b> l'unité : la fenêtre d'actions s'ouvre sous le plateau. Touche ta Bactérie.", [17], [17]);
+  K("La fenêtre liste ses options. Elle peut se <b>déplacer</b> (1 point). Touche « Déplacer ».", [Q.strip], [Q.mv]);
   A("Avance-la d'une case, vers le centre du plateau (case verte).", [12], [12], { t: 'move', from: 17, to: 12 });
   N("Et hop ! Ton point de déplacement est dépensé : il t'en reste 0. Ta Bactérie est au centre, prête à frapper.", [12, Q.mp]);
   A("Ta préparation est terminée. Touche <b>Fin de préparation</b> : le Rival va jouer la sienne.", END, END, { t: 'end' });
@@ -2802,6 +2782,12 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
     }
     setTimeout(step, 850);
   }
+  function tutoLP(el) {
+    if (!el || !tutoOn()) return;
+    var st = S[T.i];
+    if (!st || T.busy || st.lp == null || el.getAttribute('data-cell') !== String(st.lp)) return;
+    setTimeout(function () { if (S[T.i] === st && !T.busy) tutoGo(T.i + 1); }, 500);
+  }
   function tutoPre(a) { var st = S[T.i]; return !!st && !T.busy && st.adv === 'act' && tMatch(a, st.act, UI.s); }
   function tutoActDone() { var st = S[T.i]; if (st && st.adv === 'act') tutoGo(T.i + 1); }
   function tutoAfterClick() {
@@ -2811,6 +2797,11 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   function tutoShow() {
     var st = S[T.i]; if (!st || T.busy) return;
     var s = UI.s, game = s;
+    if (st.lp != null) {
+      var le = tel(st.lp);
+      if (le && showGameTip(le)) setTimeout(function () { if (S[T.i] === st) { hideTip(); tutoGo(T.i + 1); } }, 1800);
+      return;
+    }
     if (st.adv === 'act') {
       var a = E.legal(s).filter(function (x) { return tMatch(x, st.act, s); })[0];
       if (a) doAction(a);
@@ -2852,6 +2843,7 @@ var TG = {"sword": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2
   function tutoGate(ev) {
     if (!tutoOn()) return;
     var t = ev.target; if (!t || !t.closest) return;
+    var st0 = S[T.i]; if (ev.defaultPrevented && st0 && st0.lp != null) return;
     var b = t.closest('[data-tt]');
     if (b) { ev.stopPropagation(); ev.preventDefault(); SND.unlock(); tutoBtn(b.getAttribute('data-tt')); return; }
     if (t.closest('#tt-bub')) return;
